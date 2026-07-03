@@ -1,0 +1,873 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>守护时光 - 欢迎</title>
+  <style>
+    :root {
+      --bg-top: #fbfdff;
+      --bg-bottom: #edf5fd;
+      --fg: #0f1b2d;
+      --muted: #657489;
+      --soft: #8a98aa;
+      --accent: #5f8fcf;
+      --accent-deep: #446fa8;
+      --surface: rgba(255, 255, 255, 0.86);
+      --line: rgba(118, 148, 184, 0.14);
+      --shadow: 0 16px 38px rgba(42, 92, 150, 0.12);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% -8%, rgba(178, 216, 252, 0.72), transparent 410px),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+      color: var(--fg);
+      font-family: var(--font);
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+      font: inherit;
+    }
+
+    .phone {
+      position: relative;
+      inline-size: min(426px, 100vw);
+      block-size: min(920px, 100vh);
+      overflow: hidden;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(190, 224, 255, 0.48), transparent 330px),
+        linear-gradient(180deg, #fbfdff 0%, #f4f9ff 52%, #edf5fd 100%);
+      box-shadow: 0 30px 90px rgba(27, 56, 92, 0.22);
+    }
+
+    .screen {
+      position: relative;
+      min-block-size: 100%;
+      padding: 14px 24px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-bar {
+      block-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-inline: 4px;
+      font-size: 13px;
+      font-weight: 720;
+      color: #182538;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .signal {
+      inline-size: 16px;
+      block-size: 10px;
+      border: 1.7px solid currentColor;
+      border-block-start: 0;
+      border-inline-start: 0;
+      transform: skewX(-10deg);
+    }
+
+    .battery {
+      position: relative;
+      inline-size: 21px;
+      block-size: 10px;
+      border: 1.6px solid currentColor;
+      border-radius: 3px;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      inset: 2px 6px 2px 2px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      inset-block-start: 2px;
+      inset-inline-end: -4px;
+      inline-size: 2px;
+      block-size: 4px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    .brand {
+      margin-block-start: 22px;
+      text-align: center;
+    }
+
+    .app-mark {
+      inline-size: 117px;
+      block-size: 117px;
+      margin: 0 auto -10px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .app-mark img {
+      inline-size: 100%;
+      block-size: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      font-weight: 840;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .hero-asset {
+      position: relative;
+      margin: 10px auto 0;
+      inline-size: min(94%, 398px);
+      min-block-size: 354px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-asset::before {
+      content: "";
+      position: absolute;
+      inline-size: 86%;
+      block-size: 86%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(57, 146, 235, 0.14), transparent 68%);
+      filter: blur(12px);
+    }
+
+    .hero-img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      inline-size: 100%;
+      max-inline-size: 398px;
+      block-size: auto;
+      object-fit: contain;
+      transform: scale(1.15);
+      transform-origin: center;
+      filter: drop-shadow(0 18px 32px rgba(52, 108, 174, 0.11));
+    }
+
+    .copy {
+      margin-block-start: 2px;
+      text-align: center;
+    }
+
+    .copy h2 {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.22;
+      letter-spacing: -0.015em;
+      font-weight: 820;
+    }
+
+    .copy p {
+      margin: 10px auto 0;
+      max-inline-size: none;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      white-space: nowrap;
+    }
+
+    .features {
+      margin-block-start: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .feature {
+      position: relative;
+      min-block-size: 174px;
+      padding: 118px 8px 12px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255,255,255,0.96);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.82),
+        0 12px 26px rgba(54, 100, 150, 0.09);
+      text-align: center;
+      backdrop-filter: blur(14px);
+    }
+
+    .feature-icon {
+      position: absolute;
+      inset-block-start: -8px;
+      inset-inline-start: 50%;
+      inline-size: 128px;
+      block-size: 128px;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      transform: translateX(-50%);
+      background: transparent;
+      color: var(--accent-deep);
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .feature:nth-child(2) .feature-icon {
+      background: transparent;
+      color: #0e9da6;
+    }
+
+    .feature:nth-child(3) .feature-icon {
+      background: transparent;
+      color: #6975df;
+    }
+
+    .feature-icon img {
+      inline-size: 100%;
+      block-size: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .feature strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.25;
+      font-weight: 780;
+      color: #172338;
+      min-block-size: 18px;
+    }
+
+    .feature span {
+      display: block;
+      margin-block-start: 4px;
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1.38;
+    }
+
+    .bottom {
+      margin-block-start: 18px;
+      padding-block-start: 18px;
+      text-align: center;
+    }
+
+    .primary {
+      inline-size: 100%;
+      min-block-size: 56px;
+      border: 0;
+      border-radius: 20px;
+      color: white;
+      background: linear-gradient(180deg, #78a6dc, var(--accent-deep));
+      box-shadow: 0 14px 28px rgba(65, 109, 166, 0.18);
+      font-size: 17px;
+      font-weight: 780;
+      cursor: pointer;
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+
+    .primary:active {
+      transform: scale(0.985);
+      filter: brightness(0.98);
+    }
+
+    .legal {
+      margin: 12px 0 0;
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .legal button {
+      border: 0;
+      padding: 0;
+      color: #3482de;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .modal {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: flex-end;
+      background: rgba(20, 32, 48, 0.22);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.is-open { display: flex; }
+
+    .sheet {
+      inline-size: 100%;
+      padding: 20px 22px 24px;
+      border-radius: 28px 28px 0 0;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 -20px 50px rgba(25, 55, 90, 0.16);
+    }
+
+    .sheet h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .sheet p {
+      margin: 10px 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .sheet button {
+      inline-size: 100%;
+      min-block-size: 48px;
+      border: 0;
+      border-radius: 16px;
+      background: #eef5ff;
+      color: #176fd4;
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    /* Final fit pass: keep the enlarged custom icons, but make the full welcome flow fit. */
+    .screen {
+      padding-block-start: 8px;
+      padding-block-end: 14px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .screen::-webkit-scrollbar {
+      display: none;
+    }
+
+    .brand {
+      margin-block-start: 2px;
+    }
+
+    .app-mark {
+      inline-size: 108px;
+      block-size: 108px;
+      margin-block-end: -16px;
+    }
+
+    .brand h1 {
+      font-size: 29px;
+    }
+
+    .brand p {
+      margin-block-start: 3px;
+      font-size: 14px;
+    }
+
+    .hero-asset {
+      margin-block-start: 0;
+      min-block-size: 294px;
+    }
+
+    .hero-img {
+      transform: scale(1.1);
+    }
+
+    .copy {
+      margin-block-start: -8px;
+    }
+
+    .copy h2 {
+      font-size: 25px;
+      line-height: 1.18;
+    }
+
+    .copy p {
+      margin-block-start: 6px;
+      font-size: 13.5px;
+      line-height: 1.35;
+    }
+
+    .features {
+      margin-block-start: 11px;
+      gap: 10px;
+    }
+
+    .feature {
+      min-block-size: 160px;
+      padding: 98px 8px 14px;
+      border-radius: 22px;
+    }
+
+    .feature-icon {
+      inline-size: 124px;
+      block-size: 124px;
+      inset-block-start: -20px;
+    }
+
+    .feature strong {
+      font-size: 13px;
+      line-height: 1.18;
+    }
+
+    .feature span {
+      margin-block-start: 3px;
+      font-size: 10.5px;
+      line-height: 1.28;
+    }
+
+    .bottom {
+      padding-block-start: 10px;
+    }
+
+    .primary {
+      min-block-size: 52px;
+      border-radius: 18px;
+    }
+
+    .legal {
+      margin-block-start: 7px;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    @media (max-height: 780px) {
+      .phone { border-radius: 0; }
+      .screen { padding-block-start: 6px; padding-block-end: 12px; }
+      .brand { margin-block-start: 0; }
+      .app-mark { inline-size: 96px; block-size: 96px; border-radius: 0; margin-block-end: -14px; }
+      .brand h1 { font-size: 26px; }
+      .brand p { font-size: 13px; margin-block-start: 2px; }
+      .hero-asset { margin-block-start: -4px; inline-size: min(92%, 378px); min-block-size: 266px; }
+      .hero-img { transform: scale(1.04); }
+      .copy { margin-block-start: -10px; }
+      .copy h2 { font-size: 22px; }
+      .copy p { font-size: 12.5px; margin-block-start: 4px; }
+      .features { margin-block-start: 9px; gap: 8px; }
+      .feature { min-block-size: 138px; padding: 84px 6px 10px; border-radius: 20px; }
+      .feature-icon { inline-size: 106px; block-size: 106px; inset-block-start: -18px; }
+      .feature strong { font-size: 12px; }
+      .feature span { font-size: 9.8px; line-height: 1.22; }
+      .bottom { padding-block-start: 8px; }
+      .primary { min-block-size: 48px; border-radius: 17px; }
+      .legal { margin-block-start: 5px; font-size: 10.5px; }
+    }
+
+    /* Final vertical rhythm pass: distribute space evenly across the welcome flow. */
+    .screen {
+      padding-block-start: 12px;
+      padding-block-end: 18px;
+    }
+
+    .brand {
+      margin-block-start: 8px;
+    }
+
+    .app-mark {
+      inline-size: 108px;
+      block-size: 108px;
+      margin-block-end: -14px;
+    }
+
+    .hero-asset {
+      margin-block-start: -4px;
+      min-block-size: 286px;
+    }
+
+    .hero-img {
+      transform: scale(1.1);
+    }
+
+    .copy {
+      margin-block-start: -5px;
+    }
+
+    .copy h2 {
+      font-size: 25px;
+      line-height: 1.18;
+    }
+
+    .copy p {
+      margin-block-start: 6px;
+      font-size: 13.5px;
+      line-height: 1.35;
+    }
+
+    .features {
+      margin-block-start: 14px;
+      gap: 10px;
+    }
+
+    .feature {
+      min-block-size: 178px;
+      padding: 112px 8px 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .feature-icon {
+      inline-size: 120px;
+      block-size: 120px;
+      inset-block-start: -14px;
+    }
+
+    .feature span {
+      margin-block-start: 4px;
+    }
+
+    .bottom {
+      margin-block-start: 18px;
+      padding-block-start: 0;
+    }
+
+    .legal {
+      margin-block-start: 6px;
+    }
+
+    @media (max-height: 780px) {
+      .screen {
+        padding-block-start: 8px;
+        padding-block-end: 12px;
+      }
+
+      .brand {
+        margin-block-start: 2px;
+      }
+
+      .app-mark {
+        inline-size: 94px;
+        block-size: 94px;
+        margin-block-end: -14px;
+      }
+
+      .hero-asset {
+        margin-block-start: -6px;
+        min-block-size: 252px;
+      }
+
+      .hero-img {
+        transform: scale(1.03);
+      }
+
+      .copy {
+        margin-block-start: -8px;
+      }
+
+      .features {
+        margin-block-start: 10px;
+      }
+
+      .feature {
+        min-block-size: 146px;
+        padding: 88px 6px 11px;
+      }
+
+      .feature-icon {
+        inline-size: 104px;
+        block-size: 104px;
+        inset-block-start: -15px;
+      }
+
+      .bottom {
+        margin-block-start: 10px;
+      }
+    }
+
+    /* Nudge feature-card copy upward without changing the large transparent icons. */
+    .feature {
+      padding-block-start: 104px;
+      justify-content: flex-start;
+    }
+
+    @media (max-height: 780px) {
+      .feature {
+        padding-block-start: 82px;
+      }
+    }
+  </style>
+  <style>
+    /* Soft-blue theme pass for the welcome entry page. */
+    :root {
+      --accent: #5f8fcf;
+      --accent-deep: #446fa8;
+      --accent-soft: #eef6ff;
+      --muted: #66778b;
+      --soft: #8b9aab;
+      --line: rgba(120, 148, 180, 0.13);
+      --shadow: 0 14px 34px rgba(54, 92, 138, 0.11);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 50% -8%, rgba(178, 211, 242, 0.58), transparent 410px),
+        linear-gradient(180deg, #fbfdff, #edf5fc) !important;
+    }
+
+    .phone {
+      background:
+        radial-gradient(circle at 50% 24%, rgba(191, 219, 245, 0.42), transparent 330px),
+        linear-gradient(180deg, #fbfdff 0%, #f6faff 52%, #edf5fc 100%) !important;
+    }
+
+    .feature {
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.86),
+        0 11px 24px rgba(54, 92, 138, 0.075) !important;
+    }
+
+    .primary {
+      background: linear-gradient(180deg, #78a6dc, #456fa8) !important;
+      box-shadow:
+        0 12px 24px rgba(65, 109, 166, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.36) !important;
+    }
+
+    .legal button,
+    .sheet button {
+      color: var(--accent-deep) !important;
+    }
+
+    .sheet button {
+      background: var(--accent-soft) !important;
+    }
+
+    /* Final icon calibration: restore the previous card rhythm; only balance icon visuals. */
+    .feature-icon {
+      inline-size: 120px !important;
+      block-size: 120px !important;
+      display: grid !important;
+      place-items: center !important;
+      border-radius: 999px !important;
+      overflow: visible !important;
+    }
+
+    .feature-icon img {
+      inline-size: auto !important;
+      block-size: auto !important;
+      max-inline-size: none !important;
+      max-block-size: none !important;
+      object-fit: contain !important;
+      object-position: center !important;
+    }
+
+    .feature:nth-child(1) .feature-icon img {
+      inline-size: 104% !important;
+      block-size: 104% !important;
+    }
+
+    .feature:nth-child(2) .feature-icon img {
+      inline-size: 100% !important;
+      block-size: 100% !important;
+    }
+
+    .feature:nth-child(3) .feature-icon img {
+      inline-size: 94.5% !important;
+      block-size: 94.5% !important;
+    }
+
+    @media (max-height: 780px) {
+      .feature-icon {
+        inline-size: 106px !important;
+        block-size: 106px !important;
+      }
+    }
+  </style>
+<style>
+  /* Welcome page final reference-blue controls. */
+  :root {
+    --accent: #1b80ec;
+    --accent-deep: #1377e5;
+    --accent-soft: #eaf4ff;
+    --accent-line: #cfe4fb;
+  }
+
+  .primary {
+    background: linear-gradient(180deg, #2389f2 0%, #1377e5 100%) !important;
+    box-shadow:
+      0 14px 28px rgba(19, 119, 229, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.44) !important;
+  }
+
+  .legal button,
+  .sheet button {
+    color: #126fca !important;
+  }
+
+  .sheet button {
+    background: #eaf4ff !important;
+    border-color: #cfe4fb !important;
+  }
+
+
+    /* Unified top safe area: reserve status-bar space without rendering system icons. */
+    :root {
+      --page-safe-top: 28px;
+    }
+
+    .screen {
+      padding-block-start: var(--page-safe-top) !important;
+    }
+
+    .top,
+    .topbar {
+      margin-block-start: 0 !important;
+    }
+
+    @media (max-height: 760px) {
+      .screen {
+        padding-block-start: var(--page-safe-top) !important;
+      }
+    }
+</style>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#eaf4ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="守门监管">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <style id="pwa-shell-overrides">
+    html, body { min-height: 100%; }
+    body {
+      display: block !important;
+      place-items: initial !important;
+      overflow-x: hidden;
+      background: var(--bg, oklch(97% 0.008 245)) !important;
+    }
+    .phone {
+      inline-size: min(430px, 100vw) !important;
+      max-inline-size: 430px !important;
+      min-block-size: 100svh !important;
+      block-size: auto !important;
+      margin-inline: auto !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+    @media (min-width: 431px) {
+      body { background: oklch(96% 0.012 245) !important; }
+      .phone { min-block-size: 100vh !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="守护时光欢迎页">
+    <div class="screen">
+      <header class="brand">
+        <div class="app-mark" aria-hidden="true">
+          <img src="welcome-brand-icon.png" alt="">
+        </div>
+        <h1>守护时光</h1>
+        <p>让守护更简单，让成长更安心</p>
+      </header>
+
+      <section class="hero-asset" aria-label="守护主视觉">
+        <img class="hero-img" src="hero-guardian-ring.png" alt="守护时光主视觉">
+      </section>
+
+      <section class="copy">
+        <h2>看见使用情况，温和管理时间</h2>
+        <p>帮助家长了解孩子用机状态，合理设置规则与审批。</p>
+      </section>
+
+      <section class="features" aria-label="功能卖点">
+        <article class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <img src="welcome-feature-time.png" alt="">
+          </div>
+          <strong>屏幕时间总览</strong>
+          <span>清晰了解使用时长与应用分布</span>
+        </article>
+        <article class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <img src="welcome-feature-approval.png" alt="">
+          </div>
+          <strong>使用请求审批</strong>
+          <span>及时处理孩子发起的使用请求</span>
+        </article>
+        <article class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <img src="welcome-feature-rules.png" alt="">
+          </div>
+          <strong>学习娱乐规则</strong>
+          <span>个性化设置使用边界</span>
+        </article>
+      </section>
+
+      <footer class="bottom">
+        <button class="primary" type="button" onclick="location.href='/login'">登录 / 开始守护</button>
+        <p class="legal">登录即代表同意
+          <button type="button" data-legal="用户协议">《用户协议》</button>
+          和
+          <button type="button" data-legal="隐私政策">《隐私政策》</button>
+        </p>
+      </footer>
+    </div>
+
+    <div class="modal" id="legalModal" role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+      <div class="sheet">
+        <h3 id="legalTitle">用户协议</h3>
+        <p id="legalText">这里展示协议摘要。正式上线时可接入完整协议页面。</p>
+        <button type="button" id="closeModal">我知道了</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const modal = document.getElementById('legalModal');
+    const title = document.getElementById('legalTitle');
+    const text = document.getElementById('legalText');
+
+    document.querySelectorAll('[data-legal]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const type = button.dataset.legal;
+        window.location.href = type === '隐私政策' ? 'privacy-policy.html' : 'user-agreement.html';
+      });
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+      modal.classList.remove('is-open');
+    });
+
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) modal.classList.remove('is-open');
+    });
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

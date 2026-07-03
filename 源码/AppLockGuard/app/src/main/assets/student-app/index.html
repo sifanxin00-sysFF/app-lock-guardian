@@ -1,0 +1,35 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>守门应用锁学生端</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app" class="phone home-screen boot-shell">
+    <header class="hero-head home-hero">
+      <div class="hello">
+        <h1>守门应用锁</h1>
+        <div class="status-line">本机状态</div>
+      </div>
+    </header>
+    <section class="card state-card home-state-card">
+      <div class="top">
+        <h2 class="section-title">当前守门状态</h2>
+        <span class="pill blue">检查中</span>
+      </div>
+      <div class="state-main">
+        <div>
+          <p class="muted">本机状态</p>
+          <div class="time-big"><small>--</small></div>
+        </div>
+        <span class="state-percent">--</span>
+      </div>
+      <div class="progress home-progress"><span style="width:0%"></span></div>
+    </section>
+  </main>
+  <script src="templates.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

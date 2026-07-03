@@ -1,0 +1,20 @@
+name = "app-lock-approval-web"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+workers_dev = true
+
+routes = [
+  # Replace with your own custom domain before deploying.
+  # { pattern = "approval.example.com", custom_domain = true }
+]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "none"
+
+[[d1_databases]]
+binding = "APP_LOCK_DB"
+database_name = "app-lock-approval-db"
+database_id = "replace-with-your-d1-database-id"

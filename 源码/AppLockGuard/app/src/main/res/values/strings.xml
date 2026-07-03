@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">守门应用锁</string>
+    <string name="accessibility_service_name">守门应用锁监测服务</string>
+    <string name="accessibility_service_description">监测你选择锁定的应用，并在打开时显示锁定页。</string>
+    <string name="device_admin_description">增加卸载阻力，用于自我约束场景。它不能真正阻止卸载，但能提高绕过成本。</string>
+    <string name="monitor_channel">应用锁保护</string>
+    <string name="monitor_notification_title">守门应用锁运行中</string>
+    <string name="monitor_notification_text">后台保护运行中，正在执行守门规则。</string>
+</resources>

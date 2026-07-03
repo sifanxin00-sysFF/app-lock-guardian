@@ -1,0 +1,2307 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>我的</title>
+  <script>
+    (function () {
+      var key = "parentAppTheme";
+      var valid = { blue: true, green: true, warm: true, slate: true };
+      var theme = "";
+      try {
+        theme = new URLSearchParams(window.location.search).get("theme") || "";
+      } catch (error) {}
+      if (!valid[theme]) {
+        try {
+          theme = localStorage.getItem(key) || "";
+        } catch (error) {}
+      }
+      if (!valid[theme] && window.name && window.name.indexOf(key + "=") === 0) {
+        theme = window.name.slice(key.length + 1);
+      }
+      if (!valid[theme]) {
+        var cookie = document.cookie.split("; ").find(function (item) {
+          return item.indexOf(key + "=") === 0;
+        });
+        theme = cookie ? decodeURIComponent(cookie.split("=")[1] || "") : "";
+      }
+      document.documentElement.dataset.theme = valid[theme] ? theme : "blue";
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: oklch(97% 0.008 245);
+      --surface: oklch(100% 0 0);
+      --surface-soft: oklch(95% 0.018 245);
+      --fg: oklch(20% 0.014 250);
+      --muted: oklch(54% 0.015 250);
+      --border: oklch(90% 0.01 245);
+      --accent: oklch(63% 0.12 240);
+      --accent-deep: oklch(48% 0.13 242);
+      --green: oklch(63% 0.13 155);
+      --amber: oklch(74% 0.13 75);
+      --danger: oklch(58% 0.16 28);
+      --shadow: 0 18px 44px oklch(50% 0.04 245 / 0.13);
+      --soft-shadow: 0 10px 26px oklch(45% 0.035 245 / 0.09);
+      --radius-lg: 26px;
+      --radius-md: 20px;
+      --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% -10%, oklch(88% 0.045 235 / 0.65), transparent 34rem),
+        linear-gradient(180deg, oklch(98% 0.004 245), oklch(93% 0.012 245));
+      color: var(--fg);
+      font-family: var(--font-body);
+    }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; cursor: pointer; }
+
+    .phone {
+      inline-size: min(412px, 100vw);
+      block-size: min(900px, 100vh);
+      background: var(--bg);
+      border: 1px solid oklch(84% 0.012 245);
+      border-radius: 34px;
+      overflow: hidden;
+      box-shadow: 0 30px 90px oklch(32% 0.04 250 / 0.23);
+      position: relative;
+    }
+
+    .screen {
+      block-size: 100%;
+      overflow-y: auto;
+      padding: 16px 18px 104px;
+      scrollbar-width: none;
+    }
+
+    .screen::-webkit-scrollbar { display: none; }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      block-size: 28px;
+      padding-inline: 6px;
+      color: oklch(28% 0.014 250);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+    .signal, .battery { display: inline-block; border: 1.6px solid currentColor; }
+    .signal { inline-size: 16px; block-size: 10px; border-block-start: 0; border-inline-start: 0; transform: skewX(-10deg); }
+    .battery { inline-size: 21px; block-size: 10px; border-radius: 3px; position: relative; }
+    .battery::after { content: ""; position: absolute; inset-block-start: 2px; inset-inline-end: -4px; inline-size: 2px; block-size: 4px; border-radius: 2px; background: currentColor; }
+    .battery::before { content: ""; position: absolute; inset: 2px 6px 2px 2px; border-radius: 1px; background: currentColor; }
+
+    .page { display: block; }
+
+    .top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-block: 10px 14px;
+    }
+
+    .greeting {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 25px;
+      line-height: 1.18;
+      letter-spacing: 0;
+      font-weight: 780;
+    }
+
+    .page-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 26px;
+      line-height: 1.15;
+      font-weight: 820;
+    }
+
+    .subtle { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .online-dot { display: inline-block; inline-size: 8px; block-size: 8px; border-radius: 999px; margin-inline-end: 6px; background: var(--green); box-shadow: 0 0 0 4px oklch(78% 0.09 155 / 0.22); vertical-align: 0; }
+
+    .icon-actions { display: flex; gap: 8px; padding-block-start: 2px; }
+    .icon-btn {
+      inline-size: 44px;
+      block-size: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: oklch(100% 0 0 / 0.86);
+      color: var(--fg);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .icon {
+      inline-size: 20px;
+      block-size: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .device-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: 22px;
+      background:
+        radial-gradient(circle at 88% 12%, oklch(79% 0.08 230 / 0.55), transparent 9rem),
+        linear-gradient(145deg, oklch(99% 0.003 245), oklch(92% 0.026 238));
+      border: 1px solid oklch(88% 0.02 240);
+      box-shadow: var(--shadow);
+    }
+
+    .device-card::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: -22px;
+      inset-block-end: -34px;
+      inline-size: 150px;
+      block-size: 150px;
+      border: 18px solid oklch(71% 0.08 238 / 0.2);
+      border-radius: 999px;
+    }
+
+    .card-head, .row-between { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .card-head { position: relative; z-index: 1; }
+    .child-name { margin: 0; font-size: 19px; line-height: 1.25; font-weight: 760; }
+    .device-card .child-name { font-size: 29px; line-height: 1.08; font-weight: 850; letter-spacing: 0; }
+    .device-name { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+
+    .badge, .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-block-size: 32px;
+      padding-inline: 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .badge { color: oklch(24% 0.055 238); background: oklch(90% 0.055 235); }
+    .pill { color: var(--accent-deep); background: oklch(93% 0.036 238); }
+    .pill.green { color: oklch(32% 0.09 155); background: oklch(92% 0.045 155); }
+    .pill.amber { color: oklch(42% 0.11 72); background: oklch(94% 0.055 75); }
+
+    .device-metrics { display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; margin-block-start: 22px; position: relative; z-index: 1; }
+    .metric-soft { min-block-size: 80px; padding: 15px; border-radius: 22px; background: oklch(100% 0 0 / 0.7); border: 1px solid oklch(100% 0 0 / 0.7); backdrop-filter: blur(10px); }
+    .metric-label { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .metric-value { margin: 7px 0 0; font-size: 23px; line-height: 1; font-weight: 820; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+
+    .section { margin-block-start: 18px; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; margin-block-end: 10px; }
+    .section-title h2 { margin: 0; font-size: 17px; line-height: 1.25; font-weight: 780; letter-spacing: 0; }
+    .section-title a { color: var(--accent-deep); text-decoration: none; font-size: 13px; font-weight: 700; }
+
+    .overview { display: grid; grid-template-columns: 126px 1fr; gap: 12px; align-items: stretch; }
+    .card, .ring-card, .mini-stats, .request-card, .usage-card, .quick-card, .setting-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .card { padding: 16px; }
+    .ring-card { min-block-size: 144px; padding: 16px 12px; display: grid; place-items: center; text-align: center; }
+    .ring { --p: 68%; inline-size: 88px; block-size: 88px; display: grid; place-items: center; border-radius: 999px; background: conic-gradient(var(--accent) var(--p), oklch(91% 0.014 245) 0); position: relative; }
+    .ring::before { content: ""; position: absolute; inset: 9px; border-radius: inherit; background: var(--surface); }
+    .ring span { position: relative; font-size: 20px; font-weight: 850; font-variant-numeric: tabular-nums; }
+    .ring-caption { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+    .mini-stats { padding: 10px 14px; display: grid; gap: 8px; }
+    .stat-line { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-block-size: 36px; border-block-end: 1px solid var(--border); }
+    .stat-line:last-child { border-block-end: 0; }
+    .stat-line span { color: var(--muted); font-size: 12px; }
+    .stat-line strong { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+    .approval {
+      padding: 15px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, oklch(99% 0.004 245), oklch(95% 0.02 238));
+      border: 1px solid oklch(88% 0.024 240);
+      box-shadow: var(--shadow);
+    }
+
+    .request-card { padding: 14px; border-radius: 22px; box-shadow: none; }
+    .request-card + .request-card, .list-gap > * + * { margin-block-start: 10px; }
+    .request-top { display: flex; align-items: flex-start; gap: 10px; }
+    .app-mark { flex: 0 0 auto; inline-size: 42px; block-size: 42px; display: grid; place-items: center; border-radius: 15px; background: oklch(93% 0.035 238); color: var(--accent-deep); font-weight: 840; font-size: 15px; }
+    .request-title { margin: 0; font-size: 15px; font-weight: 780; line-height: 1.38; }
+    .request-meta { margin: 4px 0 0; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .request-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-block-start: 13px; }
+    .btn { min-block-size: 46px; border: 0; border-radius: 16px; font-size: 15px; font-weight: 780; }
+    .btn-approve { color: white; background: linear-gradient(180deg, var(--accent), var(--accent-deep)); box-shadow: 0 10px 22px oklch(50% 0.11 240 / 0.24); }
+    .btn-reject { color: var(--fg); background: oklch(95% 0.008 245); border: 1px solid var(--border); }
+
+    .usage-card { padding: 15px; }
+    .usage-row { display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center; min-block-size: 50px; }
+    .usage-row + .usage-row { border-block-start: 1px solid var(--border); }
+    .app-icon { inline-size: 32px; block-size: 32px; border-radius: 12px; display: grid; place-items: center; font-size: 13px; font-weight: 820; color: oklch(26% 0.02 250); background: var(--surface-soft); }
+    .usage-name { margin: 0 0 6px; font-size: 14px; font-weight: 730; }
+    .bar { block-size: 7px; border-radius: 999px; background: oklch(92% 0.01 245); overflow: hidden; }
+    .bar i { display: block; block-size: 100%; border-radius: inherit; background: var(--accent); }
+    .usage-time { color: var(--muted); font-size: 12px; font-weight: 720; font-variant-numeric: tabular-nums; }
+
+    .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .quick-card { min-block-size: 86px; padding: 14px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; color: var(--fg); text-align: start; }
+    .quick-card svg { color: var(--accent-deep); }
+    .quick-card strong { font-size: 14px; line-height: 1.3; }
+    .quick-card span { color: var(--muted); font-size: 12px; }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .summary-tile { min-block-size: 88px; padding: 13px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--soft-shadow); }
+    .summary-tile span { color: var(--muted); font-size: 12px; }
+    .summary-tile strong { display: block; margin-block-start: 8px; font-size: 22px; font-weight: 850; font-variant-numeric: tabular-nums; }
+
+    .rule-card { padding: 16px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--soft-shadow); }
+    .rule-card + .rule-card { margin-block-start: 10px; }
+    .switch { inline-size: 50px; block-size: 30px; border-radius: 999px; background: oklch(88% 0.012 245); padding: 3px; border: 0; }
+    .switch::before { content: ""; display: block; inline-size: 24px; block-size: 24px; border-radius: 999px; background: white; box-shadow: 0 2px 8px oklch(35% 0.02 245 / 0.18); }
+    .switch.on { background: var(--accent); }
+    .switch.on::before { transform: translateX(20px); }
+
+    .trend { min-block-size: 150px; display: flex; align-items: end; gap: 10px; padding-block-start: 12px; }
+    .trend-bar { flex: 1; border-radius: 999px 999px 8px 8px; background: linear-gradient(180deg, oklch(70% 0.095 238), oklch(55% 0.12 240)); min-block-size: 34px; }
+    .profile-card { padding: 18px; border-radius: 28px; background: linear-gradient(145deg, white, oklch(94% 0.02 238)); border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; gap: 14px; align-items: center; }
+    .avatar { inline-size: 58px; block-size: 58px; display: grid; place-items: center; border-radius: 22px; background: oklch(90% 0.055 235); color: var(--accent-deep); font-size: 22px; font-weight: 850; }
+    .menu-row { min-block-size: 54px; display: flex; align-items: center; justify-content: space-between; border-block-end: 1px solid var(--border); color: var(--fg); font-weight: 720; }
+    .menu-row:last-child { border-block-end: 0; }
+
+    .nav {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2px;
+      padding: 8px 12px 12px;
+      border: 0;
+      border-block-start: 1px solid oklch(88% 0.012 245 / 0.85);
+      border-radius: 24px 24px 0 0;
+      background: oklch(100% 0 0 / 0.9);
+      box-shadow: 0 -14px 34px oklch(35% 0.03 245 / 0.13);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-item {
+      min-block-size: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 0;
+      border-radius: 18px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 720;
+      text-decoration: none;
+    }
+
+    .nav-item.active { color: var(--accent-deep); background: oklch(93% 0.036 238); }
+    .nav-item .icon { inline-size: 19px; block-size: 19px; }
+
+    @media (max-width: 430px) {
+      body { display: block; background: var(--bg); }
+      .phone { inline-size: 100vw; block-size: 100vh; border: 0; border-radius: 0; box-shadow: none; }
+    }
+    .profile-sheet-row.is-clickable {
+      cursor: pointer;
+    }
+
+    .profile-sheet-row.is-clickable:active {
+      background: rgba(27, 128, 236, 0.055);
+      transform: scale(0.995);
+    }
+
+    .profile-policy-inline {
+      color: #1377e5;
+      font-weight: 720;
+    }
+  </style>
+  <link rel="stylesheet" href="app-polish.css">
+  <style>
+    /* Profile final pass: match the referenced light iOS settings page. */
+    .phone:has([data-page="profile"]) {
+      background:
+        radial-gradient(circle at 50% -3%, oklch(91% 0.038 242 / 0.82), transparent 18rem),
+        radial-gradient(circle at 88% 18%, oklch(96% 0.025 228 / 0.7), transparent 11rem),
+        linear-gradient(180deg, oklch(98.8% 0.006 242), oklch(95% 0.014 248)) !important;
+    }
+
+    [data-page="profile"] .top.app-page-head {
+      padding: 22px 2px 22px !important;
+      align-items: flex-start !important;
+    }
+
+    [data-page="profile"] .page-title {
+      font-size: 42px !important;
+      line-height: 1 !important;
+      font-weight: 860 !important;
+      letter-spacing: -0.035em !important;
+      color: oklch(17% 0.024 252) !important;
+    }
+
+    [data-page="profile"] .subtle {
+      margin-block-start: 10px !important;
+      color: oklch(46% 0.018 248) !important;
+      font-size: 16px !important;
+      line-height: 1.35 !important;
+      font-weight: 520 !important;
+    }
+
+    [data-page="profile"] .icon-actions {
+      gap: 12px !important;
+      padding-block-start: 2px !important;
+    }
+
+    [data-page="profile"] .icon-btn {
+      inline-size: 58px !important;
+      block-size: 58px !important;
+      border-radius: 20px !important;
+      color: oklch(21% 0.02 252) !important;
+      background:
+        linear-gradient(180deg, oklch(100% 0 0 / 0.92), oklch(96% 0.018 244 / 0.78)) !important;
+      border: 1px solid oklch(100% 0 0 / 0.88) !important;
+      box-shadow:
+        0 12px 24px oklch(45% 0.03 245 / 0.09),
+        inset 0 1px 0 oklch(100% 0 0 / 0.95) !important;
+    }
+
+    [data-page="profile"] .icon-btn .icon {
+      inline-size: 25px !important;
+      block-size: 25px !important;
+      stroke-width: 2.1 !important;
+    }
+
+    [data-page="profile"] .notify-dot::after {
+      inset-block-start: 9px !important;
+      inset-inline-end: 10px !important;
+      inline-size: 10px !important;
+      block-size: 10px !important;
+      background: oklch(63% 0.22 28) !important;
+      box-shadow: 0 0 0 3px oklch(100% 0 0) !important;
+    }
+
+    [data-page="profile"] .section {
+      margin-block-start: 18px !important;
+    }
+
+    [data-page="profile"] .profile-card,
+    [data-page="profile"] .guardian-status-card,
+    [data-page="profile"] .family-device-card,
+    [data-page="profile"] .profile-menu-card {
+      border-radius: 30px !important;
+      background:
+        linear-gradient(180deg, oklch(100% 0 0 / 0.9), oklch(98.5% 0.007 246 / 0.78)) !important;
+      border: 1px solid oklch(100% 0 0 / 0.9) !important;
+      box-shadow:
+        0 16px 36px oklch(42% 0.03 245 / 0.08),
+        inset 0 1px 0 oklch(100% 0 0 / 0.95) !important;
+      backdrop-filter: blur(18px) !important;
+    }
+
+    [data-page="profile"] .profile-card {
+      min-block-size: 136px !important;
+      display: grid !important;
+      grid-template-columns: 86px 1fr 28px !important;
+      align-items: center !important;
+      gap: 18px !important;
+      padding: 22px !important;
+    }
+
+    [data-page="profile"] .profile-avatar {
+      inline-size: 78px !important;
+      block-size: 78px !important;
+      border-radius: 999px !important;
+      display: grid !important;
+      place-items: center !important;
+      color: white !important;
+      background:
+        radial-gradient(circle at 50% 36%, oklch(79% 0.12 239) 0 24%, transparent 25%),
+        radial-gradient(ellipse at 50% 78%, oklch(61% 0.16 246) 0 34%, transparent 35%),
+        linear-gradient(180deg, oklch(94% 0.03 244), oklch(86% 0.045 244)) !important;
+      box-shadow:
+        0 12px 26px oklch(42% 0.035 245 / 0.12),
+        inset 0 1px 0 oklch(100% 0 0 / 0.88) !important;
+    }
+
+    [data-page="profile"] .profile-avatar svg {
+      inline-size: 44px;
+      block-size: 44px;
+      fill: currentColor;
+      opacity: 0.96;
+    }
+
+    [data-page="profile"] .profile-name {
+      margin: 0 !important;
+      color: oklch(17% 0.024 252) !important;
+      font-size: 26px !important;
+      line-height: 1.1 !important;
+      font-weight: 850 !important;
+      letter-spacing: -0.02em !important;
+    }
+
+    [data-page="profile"] .profile-meta {
+      margin: 10px 0 0 !important;
+      color: oklch(45% 0.018 248) !important;
+      font-size: 15px !important;
+      line-height: 1.35 !important;
+      font-weight: 560 !important;
+    }
+
+    [data-page="profile"] .chevron-icon {
+      color: oklch(47% 0.018 248);
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 360;
+    }
+
+    [data-page="profile"] .guardian-status-card {
+      position: relative;
+      overflow: hidden;
+      min-block-size: 120px;
+      padding: 22px;
+    }
+
+    [data-page="profile"] .guardian-status-card::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: -4px;
+      inset-block-end: -20px;
+      inline-size: 136px;
+      block-size: 108px;
+      opacity: 0.55;
+      background:
+        radial-gradient(circle at 47% 45%, oklch(79% 0.095 239 / 0.64), transparent 24%),
+        radial-gradient(ellipse at 55% 62%, oklch(90% 0.05 238 / 0.72), transparent 64%);
+      border-radius: 999px;
+      transform: rotate(-18deg);
+    }
+
+    [data-page="profile"] .status-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: oklch(55% 0.16 245);
+      font-size: 17px;
+      line-height: 1.2;
+      font-weight: 830;
+    }
+
+    [data-page="profile"] .status-heading svg {
+      inline-size: 24px;
+      block-size: 24px;
+      fill: currentColor;
+    }
+
+    [data-page="profile"] .guardian-status-card p {
+      position: relative;
+      z-index: 1;
+      margin: 18px 0 0;
+      color: oklch(29% 0.018 248);
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 560;
+    }
+
+    [data-page="profile"] .section-title h2 {
+      font-size: 22px !important;
+      color: oklch(17% 0.024 252) !important;
+      font-weight: 850 !important;
+      letter-spacing: -0.02em !important;
+    }
+
+    [data-page="profile"] .family-device-card {
+      padding: 16px 18px !important;
+    }
+
+    [data-page="profile"] .profile-device-row {
+      display: grid !important;
+      grid-template-columns: 58px 1fr auto !important;
+      align-items: center !important;
+      gap: 16px !important;
+      min-block-size: 86px !important;
+      padding: 12px 0 !important;
+      border-block-end: 1px solid oklch(86% 0.008 246 / 0.72) !important;
+    }
+
+    [data-page="profile"] .profile-device-row:last-child {
+      border-block-end: 0 !important;
+    }
+
+    [data-page="profile"] .device-outline-icon,
+    [data-page="profile"] .add-outline-icon,
+    [data-page="profile"] .menu-icon {
+      inline-size: 48px;
+      block-size: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: oklch(54% 0.16 245);
+      background:
+        linear-gradient(180deg, oklch(95% 0.034 244), oklch(100% 0 0 / 0.76));
+      box-shadow:
+        inset 0 1px 0 white,
+        0 8px 18px oklch(45% 0.035 245 / 0.06);
+    }
+
+    [data-page="profile"] .device-outline-icon svg,
+    [data-page="profile"] .add-outline-icon svg,
+    [data-page="profile"] .menu-icon svg {
+      inline-size: 26px;
+      block-size: 26px;
+      stroke: currentColor;
+      stroke-width: 2.1;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    [data-page="profile"] .device-title {
+      margin: 0 !important;
+      color: oklch(17% 0.024 252) !important;
+      font-size: 19px !important;
+      line-height: 1.2 !important;
+      font-weight: 850 !important;
+      letter-spacing: -0.015em !important;
+    }
+
+    [data-page="profile"] .device-sub {
+      margin: 7px 0 0 !important;
+      color: oklch(45% 0.018 248) !important;
+      font-size: 14px !important;
+      line-height: 1.3 !important;
+      font-weight: 550 !important;
+    }
+
+    [data-page="profile"] .online-pill {
+      min-block-size: 38px;
+      display: inline-flex;
+      align-items: center;
+      padding-inline: 16px;
+      border-radius: 999px;
+      color: oklch(53% 0.16 245);
+      background: oklch(94% 0.035 244 / 0.9);
+      font-size: 15px;
+      font-weight: 830;
+    }
+
+    [data-page="profile"] .profile-menu-card {
+      padding: 10px 18px !important;
+    }
+
+    [data-page="profile"] .menu-row {
+      min-block-size: 72px !important;
+      display: grid !important;
+      grid-template-columns: 58px 1fr auto !important;
+      align-items: center !important;
+      gap: 16px !important;
+      padding: 0 !important;
+      border-block-end: 1px solid oklch(86% 0.008 246 / 0.72) !important;
+      color: oklch(18% 0.022 252) !important;
+      font-size: 18px !important;
+      font-weight: 760 !important;
+      background: transparent !important;
+    }
+
+    [data-page="profile"] .menu-row:last-child {
+      border-block-end: 0 !important;
+    }
+
+    [data-page="profile"] .menu-row.featured {
+      margin: 0 !important;
+      color: oklch(18% 0.022 252) !important;
+    }
+
+    [data-page="profile"] .menu-row span:last-child,
+    [data-page="profile"] .profile-device-row .row-arrow {
+      color: oklch(46% 0.018 248) !important;
+      font-size: 32px !important;
+      font-weight: 360 !important;
+      line-height: 1 !important;
+    }
+
+    /* Profile compact pass: keep the iOS settings feel, but remove the loose top rhythm. */
+    .screen:has([data-page="profile"]) {
+      padding-block-start: 10px !important;
+      padding-block-end: 88px !important;
+    }
+
+    [data-page="profile"] .top.app-page-head {
+      padding-block: 12px 12px !important;
+    }
+
+    [data-page="profile"] .page-title {
+      font-size: 38px !important;
+      letter-spacing: -0.032em !important;
+    }
+
+    [data-page="profile"] .subtle {
+      margin-block-start: 7px !important;
+      font-size: 14px !important;
+    }
+
+    [data-page="profile"] .icon-actions {
+      gap: 8px !important;
+      padding-block-start: 0 !important;
+    }
+
+    [data-page="profile"] .icon-btn {
+      inline-size: 48px !important;
+      block-size: 48px !important;
+      border-radius: 17px !important;
+    }
+
+    [data-page="profile"] .icon-btn .icon {
+      inline-size: 21px !important;
+      block-size: 21px !important;
+    }
+
+    [data-page="profile"] .section {
+      margin-block-start: 14px !important;
+    }
+
+    [data-page="profile"] .profile-card {
+      min-block-size: 112px !important;
+      grid-template-columns: 70px 1fr 22px !important;
+      gap: 14px !important;
+      padding: 17px 18px !important;
+      border-radius: 26px !important;
+    }
+
+    [data-page="profile"] .profile-avatar {
+      inline-size: 64px !important;
+      block-size: 64px !important;
+    }
+
+    [data-page="profile"] .profile-avatar svg {
+      inline-size: 36px !important;
+      block-size: 36px !important;
+    }
+
+    [data-page="profile"] .profile-name {
+      font-size: 24px !important;
+    }
+
+    [data-page="profile"] .profile-meta {
+      margin-block-start: 6px !important;
+      font-size: 13px !important;
+    }
+
+    [data-page="profile"] .guardian-status-card {
+      min-block-size: 96px !important;
+      padding: 17px 18px !important;
+      border-radius: 26px !important;
+    }
+
+    [data-page="profile"] .guardian-status-card p {
+      margin-block-start: 10px !important;
+      font-size: 14px !important;
+      line-height: 1.45 !important;
+    }
+
+    [data-page="profile"] .status-heading {
+      font-size: 15px !important;
+    }
+
+    [data-page="profile"] .section-title {
+      margin-block-end: 8px !important;
+    }
+
+    [data-page="profile"] .section-title h2 {
+      font-size: 19px !important;
+    }
+
+    [data-page="profile"] .family-device-card {
+      padding: 8px 14px !important;
+      border-radius: 26px !important;
+    }
+
+    [data-page="profile"] .profile-device-row {
+      grid-template-columns: 42px 1fr auto 16px !important;
+      gap: 10px !important;
+      min-block-size: 66px !important;
+      padding-block: 7px !important;
+    }
+
+    [data-page="profile"] .profile-device-row:last-child {
+      grid-template-columns: 42px 1fr 16px !important;
+    }
+
+    [data-page="profile"] .device-outline-icon,
+    [data-page="profile"] .add-outline-icon {
+      inline-size: 36px !important;
+      block-size: 36px !important;
+      border-radius: 13px !important;
+      box-shadow: inset 0 1px 0 white !important;
+    }
+
+    [data-page="profile"] .device-outline-icon svg,
+    [data-page="profile"] .add-outline-icon svg {
+      inline-size: 21px !important;
+      block-size: 21px !important;
+    }
+
+    [data-page="profile"] .device-title {
+      font-size: 16px !important;
+      line-height: 1.2 !important;
+    }
+
+    [data-page="profile"] .device-sub {
+      margin-block-start: 4px !important;
+      font-size: 12px !important;
+    }
+
+    [data-page="profile"] .online-pill {
+      min-block-size: 26px !important;
+      padding-inline: 10px !important;
+      font-size: 12px !important;
+      font-weight: 780 !important;
+    }
+
+    [data-page="profile"] .profile-device-row .row-arrow,
+    [data-page="profile"] .menu-row span:last-child,
+    [data-page="profile"] .chevron-icon {
+      font-size: 24px !important;
+      color: oklch(55% 0.014 248) !important;
+    }
+
+    [data-page="profile"] .profile-menu-card {
+      padding: 4px 14px !important;
+      border-radius: 26px !important;
+    }
+
+    [data-page="profile"] .menu-row {
+      min-block-size: 60px !important;
+      grid-template-columns: 42px 1fr 18px !important;
+      gap: 10px !important;
+      font-size: 16px !important;
+      border-block-end-color: oklch(88% 0.008 246 / 0.52) !important;
+    }
+
+    [data-page="profile"] .menu-icon {
+      inline-size: 36px !important;
+      block-size: 36px !important;
+      border-radius: 13px !important;
+      box-shadow: inset 0 1px 0 white !important;
+    }
+
+    [data-page="profile"] .menu-icon svg {
+      inline-size: 21px !important;
+      block-size: 21px !important;
+    }
+
+    /* Profile white-card alignment pass: match the home page's pure white card feel. */
+    [data-page="profile"] .profile-card,
+    [data-page="profile"] .guardian-status-card,
+    [data-page="profile"] .family-device-card,
+    [data-page="profile"] .profile-menu-card {
+      background: oklch(100% 0 0) !important;
+      border: 1px solid oklch(90% 0.006 245 / 0.76) !important;
+      box-shadow:
+        inset 0 1px 0 oklch(100% 0 0 / 0.92),
+        0 12px 30px oklch(42% 0.026 245 / 0.075) !important;
+    }
+
+    [data-page="profile"] .guardian-status-card::after,
+    [data-page="profile"] .guardian-status-card::before {
+      display: none !important;
+    }
+
+    [data-page="profile"] .profile-card {
+      box-shadow:
+        inset 0 1px 0 oklch(100% 0 0 / 0.94),
+        0 14px 34px oklch(42% 0.026 245 / 0.08) !important;
+    }
+
+    [data-page="profile"] .profile-avatar,
+    [data-page="profile"] .device-outline-icon,
+    [data-page="profile"] .add-outline-icon,
+    [data-page="profile"] .menu-icon {
+      background: oklch(96.5% 0.012 245) !important;
+      color: oklch(52% 0.105 242) !important;
+      box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.9) !important;
+    }
+
+    [data-page="profile"] .profile-device-row,
+    [data-page="profile"] .menu-row {
+      background: transparent !important;
+      box-shadow: none !important;
+      border-block-end-color: oklch(90% 0.006 245 / 0.7) !important;
+    }
+
+    [data-page="profile"] .online-pill {
+      background: oklch(95.5% 0.018 242) !important;
+      color: oklch(43% 0.09 242) !important;
+      border: 1px solid oklch(88% 0.024 242 / 0.82) !important;
+    }
+
+    [data-page="profile"] .status-heading svg,
+    [data-page="profile"] .menu-icon svg,
+    [data-page="profile"] .device-outline-icon svg,
+    [data-page="profile"] .add-outline-icon svg {
+      color: oklch(52% 0.105 242) !important;
+      stroke: currentColor !important;
+    }
+
+    /* Selective rollback: keep the profile identity card in the earlier soft,
+       slightly lifted blue-white style while leaving the rest of the page white. */
+    [data-page="profile"] .profile-card {
+      background:
+        linear-gradient(180deg, oklch(100% 0 0 / 0.98), oklch(96.4% 0.015 244 / 0.92)) !important;
+      border: 1px solid oklch(88% 0.014 244 / 0.74) !important;
+      box-shadow:
+        inset 0 1px 0 oklch(100% 0 0 / 0.96),
+        0 14px 34px oklch(42% 0.03 245 / 0.09) !important;
+    }
+  </style>
+  <style>
+    /* Profile interaction layer: clickable feedback + native-feeling sheets. */
+    [data-page="profile"] [data-profile-action] {
+      cursor: pointer;
+      transition: transform 160ms ease, filter 160ms ease, background-color 160ms ease;
+    }
+
+    [data-page="profile"] [data-profile-action]:active {
+      transform: scale(0.985);
+      filter: brightness(0.985);
+    }
+
+    [data-page="profile"] .online-pill[data-profile-action]:active {
+      transform: scale(0.96);
+    }
+
+    .profile-sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 18px 14px 0;
+      background: oklch(20% 0.018 250 / 0);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease, background 220ms ease;
+    }
+
+    .profile-sheet-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+      background: oklch(20% 0.018 250 / 0.22);
+    }
+
+    .profile-sheet {
+      inline-size: 100%;
+      max-block-size: 78%;
+      overflow: auto;
+      padding: 18px 18px 20px;
+      border-radius: 28px 28px 0 0;
+      background: oklch(100% 0 0);
+      border: 1px solid oklch(90% 0.006 245 / 0.72);
+      box-shadow: 0 -18px 48px oklch(33% 0.035 245 / 0.18), inset 0 1px 0 oklch(100% 0 0 / 0.96);
+      transform: translateY(28px);
+      transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      scrollbar-width: none;
+    }
+
+    .profile-sheet::-webkit-scrollbar { display: none; }
+
+    .profile-sheet-backdrop.show .profile-sheet { transform: translateY(0); }
+
+    .profile-sheet-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-block-end: 14px;
+    }
+
+    .profile-sheet-title {
+      margin: 0;
+      color: oklch(17% 0.024 252);
+      font-size: 22px;
+      line-height: 1.18;
+      font-weight: 840;
+      letter-spacing: -0.02em;
+    }
+
+    .profile-sheet-subtitle {
+      margin: 5px 0 0;
+      color: oklch(50% 0.016 248);
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 540;
+    }
+
+    .profile-sheet-close {
+      inline-size: 34px;
+      block-size: 34px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: oklch(96% 0.009 245);
+      color: oklch(42% 0.014 248);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .profile-sheet-list {
+      display: grid;
+      overflow: hidden;
+      border: 1px solid oklch(91% 0.006 245 / 0.78);
+      border-radius: 22px;
+      background: white;
+    }
+
+    .profile-sheet-row {
+      min-block-size: 54px;
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-block-end: 1px solid oklch(91% 0.006 245 / 0.66);
+      color: oklch(22% 0.018 250);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .profile-sheet-row:last-child { border-block-end: 0; }
+
+    .profile-sheet-icon {
+      inline-size: 34px;
+      block-size: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: oklch(52% 0.105 242);
+      background: oklch(96% 0.016 242);
+      font-size: 16px;
+      font-weight: 820;
+    }
+
+    .profile-sheet-row small,
+    .profile-detail-grid span {
+      color: oklch(50% 0.016 248);
+      font-size: 12px;
+      font-weight: 560;
+    }
+
+    .profile-sheet-action {
+      border: 0;
+      background: transparent;
+      color: oklch(52% 0.105 242);
+      font-size: 13px;
+      font-weight: 780;
+    }
+
+    .profile-detail-card {
+      padding: 14px;
+      border: 1px solid oklch(91% 0.006 245 / 0.78);
+      border-radius: 22px;
+      background: white;
+    }
+
+    .profile-detail-avatar {
+      inline-size: 62px;
+      block-size: 62px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      border-radius: 999px;
+      color: white;
+      background: linear-gradient(180deg, oklch(76% 0.12 238), oklch(58% 0.16 244));
+      font-size: 22px;
+      font-weight: 850;
+    }
+
+    .profile-detail-grid {
+      display: grid;
+      gap: 8px;
+      margin-block-start: 10px;
+    }
+
+    .profile-detail-grid div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-block-size: 36px;
+      padding-inline: 4px;
+      color: oklch(22% 0.018 250);
+      font-size: 14px;
+      font-weight: 680;
+    }
+
+    .profile-sheet-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-block-start: 14px;
+    }
+
+    .profile-sheet-button {
+      min-block-size: 44px;
+      border: 0;
+      border-radius: 16px;
+      color: white;
+      background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+      font-size: 14px;
+      font-weight: 780;
+    }
+
+    .profile-sheet-button.secondary {
+      color: oklch(22% 0.018 250);
+      background: oklch(96% 0.008 245);
+      border: 1px solid oklch(90% 0.006 245 / 0.8);
+    }
+
+    .profile-sheet-button.danger {
+      background: linear-gradient(180deg, oklch(64% 0.17 28), oklch(54% 0.16 28));
+    }
+
+    .profile-modal-switch {
+      inline-size: 46px;
+      block-size: 28px;
+      border: 0;
+      border-radius: 999px;
+      padding: 3px;
+      background: oklch(88% 0.01 245);
+      transition: background 180ms ease;
+    }
+
+    .profile-modal-switch::before {
+      content: "";
+      display: block;
+      inline-size: 22px;
+      block-size: 22px;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 2px 8px oklch(35% 0.02 245 / 0.16);
+      transition: transform 180ms ease;
+    }
+
+    .profile-modal-switch.on {
+      background: var(--accent);
+    }
+
+    .profile-modal-switch.on::before {
+      transform: translateX(18px);
+    }
+
+    .profile-feedback-input {
+      inline-size: 100%;
+      min-block-size: 92px;
+      resize: none;
+      margin-block-start: 12px;
+      padding: 12px;
+      border: 1px solid oklch(88% 0.008 245);
+      border-radius: 18px;
+      background: oklch(98% 0.004 245);
+      color: var(--fg);
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .profile-toast {
+      position: absolute;
+      inset-inline: 50%;
+      inset-block-end: 92px;
+      z-index: 120;
+      min-inline-size: 190px;
+      max-inline-size: calc(100% - 48px);
+      padding: 12px 16px;
+      border-radius: 999px;
+      text-align: center;
+      color: white;
+      background: oklch(22% 0.018 250 / 0.88);
+      box-shadow: 0 12px 30px oklch(24% 0.02 250 / 0.24);
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) translateY(10px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .profile-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Profile sheets visual refinement: lightweight iOS list sheets. */
+    .profile-sheet-backdrop {
+      padding: 14px 12px 0 !important;
+      background: oklch(18% 0.016 250 / 0) !important;
+      backdrop-filter: blur(0);
+    }
+
+    .profile-sheet-backdrop.show {
+      background: oklch(18% 0.016 250 / 0.15) !important;
+      backdrop-filter: blur(3px);
+    }
+
+    .profile-sheet {
+      max-block-size: 70% !important;
+      padding: 18px 18px max(18px, env(safe-area-inset-bottom)) !important;
+      border: 0 !important;
+      border-radius: 30px 30px 0 0 !important;
+      background:
+        linear-gradient(180deg, oklch(100% 0 0), oklch(98.5% 0.003 245)) !important;
+      box-shadow: 0 -18px 46px oklch(30% 0.026 245 / 0.14) !important;
+    }
+
+    .profile-sheet-head {
+      margin-block-end: 10px !important;
+      align-items: center !important;
+    }
+
+    .profile-sheet-title {
+      font-size: 21px !important;
+      letter-spacing: -0.018em !important;
+    }
+
+    .profile-sheet-subtitle {
+      margin-block-start: 4px !important;
+      color: oklch(52% 0.012 248) !important;
+    }
+
+    .profile-sheet-close {
+      inline-size: 32px !important;
+      block-size: 32px !important;
+      background: oklch(95% 0.004 245) !important;
+      color: oklch(48% 0.012 248) !important;
+      box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.82);
+    }
+
+    .profile-sheet-list {
+      display: block !important;
+      overflow: visible !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+    }
+
+    .profile-sheet-row {
+      min-block-size: 56px !important;
+      display: grid !important;
+      grid-template-columns: 42px 1fr auto !important;
+      gap: 11px !important;
+      padding: 8px 0 !important;
+      border-block-end: 1px solid oklch(91% 0.004 245 / 0.76) !important;
+      color: oklch(21% 0.017 250) !important;
+      font-size: 14px !important;
+      font-weight: 690 !important;
+    }
+
+    .profile-sheet-row:last-child {
+      border-block-end: 0 !important;
+    }
+
+    .profile-sheet-row small {
+      display: block;
+      margin-block-start: 3px;
+      color: oklch(53% 0.012 248) !important;
+      font-size: 12px !important;
+      font-weight: 540 !important;
+      line-height: 1.3;
+    }
+
+    .profile-sheet-row.danger,
+    .profile-sheet-row.danger .profile-sheet-action {
+      color: oklch(50% 0.15 28) !important;
+    }
+
+    .profile-sheet-icon {
+      inline-size: 34px !important;
+      block-size: 34px !important;
+      border-radius: 12px !important;
+      display: grid !important;
+      place-items: center !important;
+      background: oklch(95.5% 0.014 245) !important;
+      color: oklch(54% 0.12 242) !important;
+      box-shadow: none !important;
+    }
+
+    .profile-sheet-icon svg {
+      inline-size: 19px;
+      block-size: 19px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .profile-sheet-icon.green {
+      color: oklch(55% 0.13 155) !important;
+      background: oklch(95% 0.028 155) !important;
+    }
+
+    .profile-sheet-icon.cyan {
+      color: oklch(56% 0.105 205) !important;
+      background: oklch(95% 0.024 205) !important;
+    }
+
+    .profile-sheet-icon.orange {
+      color: oklch(62% 0.14 65) !important;
+      background: oklch(96% 0.035 75) !important;
+    }
+
+    .profile-sheet-icon.purple {
+      color: oklch(55% 0.12 292) !important;
+      background: oklch(96% 0.026 292) !important;
+    }
+
+    .profile-sheet-icon.red {
+      color: oklch(55% 0.16 28) !important;
+      background: oklch(96% 0.03 28) !important;
+    }
+
+    .profile-sheet-icon.gray {
+      color: oklch(48% 0.018 248) !important;
+      background: oklch(95% 0.004 245) !important;
+    }
+
+    .profile-sheet-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-block-size: 24px;
+      padding-inline: 9px;
+      border-radius: 999px;
+      color: oklch(52% 0.105 242);
+      background: oklch(95% 0.018 242);
+      font-size: 12px;
+      font-weight: 740;
+      white-space: nowrap;
+    }
+
+    .profile-sheet-pill.green {
+      color: oklch(48% 0.12 155);
+      background: oklch(94.5% 0.028 155);
+    }
+
+    .profile-sheet-pill.gray {
+      color: oklch(48% 0.012 248);
+      background: oklch(94.5% 0.004 245);
+    }
+
+    .profile-sheet-pill.purple {
+      color: oklch(52% 0.11 292);
+      background: oklch(95% 0.025 292);
+    }
+
+    .profile-sheet-chevron {
+      color: oklch(58% 0.01 248);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .profile-sheet-action {
+      min-block-size: 28px !important;
+      padding-inline: 10px !important;
+      border-radius: 999px !important;
+      background: oklch(95% 0.018 242) !important;
+      color: oklch(52% 0.105 242) !important;
+      font-size: 12px !important;
+      font-weight: 760 !important;
+    }
+
+    .profile-sheet-action.danger {
+      color: oklch(50% 0.15 28) !important;
+      background: oklch(96% 0.028 28) !important;
+    }
+
+    .profile-account-summary {
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      padding-block: 6px 12px;
+      text-align: center;
+    }
+
+    .profile-account-summary strong {
+      color: oklch(18% 0.018 250);
+      font-size: 19px;
+      font-weight: 830;
+      letter-spacing: -0.01em;
+    }
+
+    .profile-account-summary span {
+      color: oklch(52% 0.012 248);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .profile-detail-card {
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .profile-detail-avatar {
+      inline-size: 66px !important;
+      block-size: 66px !important;
+      margin: 0 !important;
+      border-radius: 24px !important;
+      box-shadow: 0 12px 26px oklch(52% 0.13 242 / 0.18);
+    }
+
+    .profile-sheet-actions {
+      margin-block-start: 14px !important;
+      gap: 10px !important;
+    }
+
+    .profile-sheet-actions.single {
+      grid-template-columns: 1fr !important;
+    }
+
+    .profile-sheet-button {
+      min-block-size: 42px !important;
+      border-radius: 15px !important;
+      box-shadow: 0 8px 18px oklch(50% 0.12 242 / 0.14);
+    }
+
+    .profile-sheet-button.secondary {
+      box-shadow: none !important;
+      background: oklch(96% 0.005 245) !important;
+    }
+
+    .profile-sheet-button.danger,
+    .profile-sheet-button.danger-light {
+      color: oklch(50% 0.15 28) !important;
+      background: oklch(96% 0.028 28) !important;
+      box-shadow: none !important;
+    }
+
+    .profile-modal-switch {
+      inline-size: 44px !important;
+      block-size: 26px !important;
+      padding: 3px !important;
+      background: oklch(88% 0.006 245) !important;
+    }
+
+    .profile-modal-switch::before {
+      inline-size: 20px !important;
+      block-size: 20px !important;
+    }
+
+    .profile-modal-switch.on {
+      background: oklch(60% 0.14 242) !important;
+    }
+
+    .profile-modal-switch.on::before {
+      transform: translateX(18px) !important;
+    }
+
+    .profile-feedback-input {
+      margin-block-start: 8px !important;
+      border: 0 !important;
+      background: oklch(96.5% 0.005 245) !important;
+      box-shadow: inset 0 0 0 1px oklch(90% 0.005 245);
+    }
+
+    /* Profile sheets final templates: detail sheets + iOS list sheets. */
+    .profile-sheet-backdrop {
+      padding: 0 !important;
+      background: oklch(18% 0.018 250 / 0) !important;
+      backdrop-filter: blur(0);
+    }
+
+    .profile-sheet-backdrop.show {
+      background: oklch(18% 0.018 250 / 0.14) !important;
+      backdrop-filter: blur(2px);
+    }
+
+    .profile-sheet {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: 0;
+      inline-size: 100%;
+      max-block-size: 70% !important;
+      min-block-size: auto !important;
+      padding: 18px 20px max(18px, env(safe-area-inset-bottom)) !important;
+      border: 0 !important;
+      border-radius: 30px 30px 0 0 !important;
+      background: oklch(100% 0 0) !important;
+      box-shadow: 0 -16px 42px oklch(28% 0.024 248 / 0.13) !important;
+    }
+
+    .profile-sheet--detail {
+      max-block-size: 58% !important;
+    }
+
+    .profile-sheet--list {
+      max-block-size: 70% !important;
+    }
+
+    .profile-sheet-head {
+      align-items: center !important;
+      margin-block-end: 8px !important;
+    }
+
+    .profile-sheet-title {
+      font-size: 21px !important;
+      line-height: 1.15 !important;
+      font-weight: 820 !important;
+      letter-spacing: -0.018em !important;
+    }
+
+    .profile-sheet-subtitle {
+      max-inline-size: 29ch;
+      margin-block-start: 4px !important;
+      color: oklch(52% 0.012 248) !important;
+      font-size: 13px !important;
+      line-height: 1.35 !important;
+      font-weight: 520 !important;
+    }
+
+    .profile-sheet-close {
+      inline-size: 32px !important;
+      block-size: 32px !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: oklch(95.5% 0.003 245) !important;
+      color: oklch(45% 0.012 248) !important;
+      font-size: 20px !important;
+      line-height: 1 !important;
+      box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.88) !important;
+    }
+
+    .profile-sheet-list {
+      display: block !important;
+      margin-block-start: 4px !important;
+      overflow: hidden !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .profile-sheet-row {
+      min-block-size: 54px !important;
+      display: grid !important;
+      grid-template-columns: 40px minmax(0, 1fr) auto !important;
+      align-items: center !important;
+      gap: 11px !important;
+      padding: 8px 0 !important;
+      border-block-end: 1px solid oklch(91% 0.004 245 / 0.72) !important;
+      background: transparent !important;
+      color: oklch(19% 0.018 250) !important;
+      font-size: 14px !important;
+      font-weight: 680 !important;
+    }
+
+    .profile-sheet-list--detail .profile-sheet-row {
+      min-block-size: 50px !important;
+      grid-template-columns: 36px minmax(0, 1fr) auto !important;
+      gap: 10px !important;
+      padding-block: 7px !important;
+    }
+
+    .profile-sheet-row:last-child {
+      border-block-end: 0 !important;
+    }
+
+    .profile-sheet-row small {
+      display: block !important;
+      margin-block-start: 2px !important;
+      color: oklch(52% 0.012 248) !important;
+      font-size: 12px !important;
+      font-weight: 520 !important;
+      line-height: 1.32 !important;
+    }
+
+    .profile-sheet-value {
+      max-inline-size: 136px;
+      color: oklch(39% 0.014 248);
+      font-size: 13px;
+      font-weight: 650;
+      text-align: end;
+      white-space: nowrap;
+    }
+
+    .profile-sheet-icon {
+      inline-size: 32px !important;
+      block-size: 32px !important;
+      border-radius: 11px !important;
+      display: grid !important;
+      place-items: center !important;
+      box-shadow: none !important;
+    }
+
+    .profile-sheet-list--detail .profile-sheet-icon {
+      inline-size: 30px !important;
+      block-size: 30px !important;
+      border-radius: 10px !important;
+    }
+
+    .profile-sheet-icon svg {
+      inline-size: 18px !important;
+      block-size: 18px !important;
+      fill: none !important;
+      stroke: currentColor !important;
+      stroke-width: 1.75 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+    }
+
+    .profile-sheet-icon.green {
+      color: oklch(52% 0.13 154) !important;
+      background: oklch(95.5% 0.03 154) !important;
+    }
+
+    .profile-sheet-icon.cyan {
+      color: oklch(54% 0.105 205) !important;
+      background: oklch(95.5% 0.024 205) !important;
+    }
+
+    .profile-sheet-icon.orange {
+      color: oklch(61% 0.14 65) !important;
+      background: oklch(96% 0.036 76) !important;
+    }
+
+    .profile-sheet-icon.purple {
+      color: oklch(54% 0.12 292) !important;
+      background: oklch(96% 0.026 292) !important;
+    }
+
+    .profile-sheet-icon.red {
+      color: oklch(54% 0.16 28) !important;
+      background: oklch(96% 0.03 28) !important;
+    }
+
+    .profile-sheet-icon.gray {
+      color: oklch(48% 0.018 248) !important;
+      background: oklch(95.5% 0.004 245) !important;
+    }
+
+    .profile-sheet-icon.blue {
+      color: oklch(53% 0.12 242) !important;
+      background: oklch(95.5% 0.02 242) !important;
+    }
+
+    .profile-sheet-pill {
+      min-block-size: 24px !important;
+      padding-inline: 9px !important;
+      border-radius: 999px !important;
+      font-size: 12px !important;
+      font-weight: 740 !important;
+      white-space: nowrap;
+    }
+
+    .profile-sheet-chevron {
+      color: oklch(60% 0.01 248) !important;
+      font-size: 22px !important;
+      line-height: 1 !important;
+    }
+
+    .profile-sheet-action {
+      min-block-size: 28px !important;
+      padding-inline: 10px !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: oklch(95.5% 0.018 242) !important;
+      color: oklch(51% 0.11 242) !important;
+      font-size: 12px !important;
+      font-weight: 760 !important;
+    }
+
+    .profile-sheet-action.danger {
+      color: oklch(50% 0.15 28) !important;
+      background: oklch(96% 0.03 28) !important;
+    }
+
+    .profile-account-summary {
+      display: grid !important;
+      justify-items: center !important;
+      gap: 5px !important;
+      padding-block: 8px 13px !important;
+      text-align: center !important;
+    }
+
+    .profile-detail-avatar {
+      inline-size: 68px !important;
+      block-size: 68px !important;
+      margin: 0 !important;
+      border-radius: 24px !important;
+      display: grid !important;
+      place-items: center !important;
+      background: linear-gradient(145deg, oklch(80% 0.09 236), oklch(62% 0.14 242)) !important;
+      color: white !important;
+      font-size: 24px !important;
+      font-weight: 820 !important;
+      box-shadow: 0 12px 26px oklch(52% 0.13 242 / 0.18) !important;
+    }
+
+    .profile-account-summary strong {
+      color: oklch(18% 0.018 250) !important;
+      font-size: 19px !important;
+      font-weight: 830 !important;
+      letter-spacing: -0.01em !important;
+    }
+
+    .profile-account-summary span {
+      color: oklch(52% 0.012 248) !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+    }
+
+    .profile-sheet-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px !important;
+      margin-block-start: 14px !important;
+    }
+
+    .profile-sheet-actions.single {
+      grid-template-columns: 1fr !important;
+    }
+
+    .profile-sheet-button {
+      min-block-size: 42px !important;
+      border: 0 !important;
+      border-radius: 15px !important;
+      background: linear-gradient(180deg, oklch(66% 0.13 242), oklch(54% 0.14 244)) !important;
+      color: white !important;
+      font-weight: 760 !important;
+      box-shadow: 0 8px 18px oklch(50% 0.12 242 / 0.14) !important;
+    }
+
+    .profile-sheet-button.secondary {
+      color: oklch(23% 0.016 250) !important;
+      background: oklch(96% 0.005 245) !important;
+      box-shadow: none !important;
+    }
+
+    .profile-sheet-button.danger,
+    .profile-sheet-button.danger-light {
+      color: oklch(50% 0.15 28) !important;
+      background: oklch(96% 0.028 28) !important;
+      box-shadow: none !important;
+    }
+
+    .profile-modal-switch {
+      inline-size: 44px !important;
+      block-size: 26px !important;
+      padding: 3px !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: oklch(88% 0.006 245) !important;
+    }
+
+    .profile-modal-switch::before {
+      content: "" !important;
+      display: block !important;
+      inline-size: 20px !important;
+      block-size: 20px !important;
+      border-radius: 999px !important;
+      background: white !important;
+      box-shadow: 0 2px 8px oklch(35% 0.018 245 / 0.18) !important;
+      transition: transform 160ms ease !important;
+    }
+
+    .profile-modal-switch.on {
+      background: oklch(60% 0.14 242) !important;
+    }
+
+    .profile-modal-switch.on::before {
+      transform: translateX(18px) !important;
+    }
+
+    .profile-feedback-input {
+      inline-size: 100%;
+      min-block-size: 110px;
+      margin-block-start: 8px !important;
+      padding: 13px 14px;
+      resize: none;
+      border: 0 !important;
+      border-radius: 16px;
+      background: oklch(96.5% 0.005 245) !important;
+      color: oklch(20% 0.018 250);
+      font: inherit;
+      box-shadow: inset 0 0 0 1px oklch(90% 0.005 245) !important;
+    }
+
+    /* Profile final soft-blue alignment: match the app-wide calmer blue. */
+    :root {
+      --accent: oklch(62% 0.082 236);
+      --accent-deep: oklch(48% 0.09 238);
+      --accent-soft: oklch(95.5% 0.018 236);
+      --accent-line: oklch(86.5% 0.022 236);
+      --green: oklch(58% 0.085 158);
+      --amber: oklch(70% 0.09 72);
+      --danger: oklch(56% 0.105 28);
+    }
+
+    .profile-avatar,
+    .profile-detail-avatar {
+      background: linear-gradient(145deg, oklch(75% 0.058 236), var(--accent-deep)) !important;
+      box-shadow: 0 12px 26px oklch(48% 0.08 238 / 0.14) !important;
+    }
+
+    .profile-card,
+    .guardian-status-card,
+    .family-device-card,
+    .profile-menu-card {
+      border-color: oklch(90% 0.006 245 / 0.72) !important;
+      box-shadow:
+        inset 0 1px 0 oklch(100% 0 0 / 0.86),
+        0 12px 30px oklch(42% 0.026 245 / 0.075) !important;
+    }
+
+    .menu-icon,
+    .device-outline-icon,
+    .add-outline-icon,
+    .status-heading svg,
+    .profile-sheet-icon.blue {
+      color: var(--accent-deep) !important;
+      background: var(--accent-soft) !important;
+    }
+
+    .online-pill,
+    .profile-sheet-pill,
+    .profile-sheet-action {
+      color: var(--accent-deep) !important;
+      background: var(--accent-soft) !important;
+      border-color: var(--accent-line) !important;
+    }
+
+    .profile-sheet-icon.green {
+      color: oklch(49% 0.085 158) !important;
+      background: oklch(95.5% 0.024 158) !important;
+    }
+
+    .profile-sheet-icon.orange {
+      color: oklch(60% 0.085 72) !important;
+      background: oklch(96% 0.024 76) !important;
+    }
+
+    .profile-sheet-icon.purple {
+      color: oklch(53% 0.075 292) !important;
+      background: oklch(96% 0.02 292) !important;
+    }
+
+    .profile-sheet-button {
+      background: linear-gradient(180deg, oklch(69% 0.075 236), var(--accent-deep)) !important;
+      box-shadow:
+        0 9px 18px oklch(48% 0.08 238 / 0.14),
+        inset 0 1px 0 oklch(100% 0 0 / 0.42) !important;
+    }
+
+    .profile-sheet-button.secondary {
+      background: oklch(96.5% 0.005 245) !important;
+      color: oklch(24% 0.014 250) !important;
+      box-shadow: none !important;
+    }
+
+    .profile-modal-switch.on {
+      background: linear-gradient(180deg, oklch(68% 0.072 236), var(--accent-deep)) !important;
+      box-shadow:
+        inset 0 1px 0 oklch(100% 0 0 / 0.35),
+        0 4px 12px oklch(48% 0.08 238 / 0.12) !important;
+    }
+  </style>
+<style>
+  /* Profile page final control-blue calibration. */
+  :root,
+  :root[data-theme="blue"] {
+    --accent: #1b80ec;
+    --accent-deep: #1377e5;
+    --accent-soft: #eaf4ff;
+    --accent-softer: #f3f8ff;
+    --accent-line: #cfe4fb;
+  }
+
+  .profile-sheet-button {
+    background: linear-gradient(180deg, #2389f2 0%, #1377e5 100%) !important;
+    box-shadow:
+      0 10px 22px rgba(19, 119, 229, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
+  }
+
+  .profile-modal-switch.on {
+    background: linear-gradient(180deg, #2389f2 0%, #1377e5 100%) !important;
+  }
+
+  .online-pill,
+  .profile-sheet-pill,
+  .profile-sheet-action,
+  .menu-icon,
+  .device-outline-icon,
+  .add-outline-icon,
+  .profile-sheet-icon.blue {
+    color: #126fca !important;
+    background: #eaf4ff !important;
+    border-color: #cfe4fb !important;
+  }
+</style>
+<style>
+  /* Profile final pass: use the reference iOS blue on every remaining profile accent. */
+  :root,
+  :root[data-theme="blue"] {
+    --accent: #1b80ec;
+    --accent-deep: #1377e5;
+    --accent-soft: #eaf4ff;
+    --accent-softer: #f4f9ff;
+    --accent-line: #cfe4fb;
+  }
+
+  [data-page="profile"] .profile-avatar,
+  .profile-detail-avatar {
+    background:
+      radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.78) 0 19%, transparent 20%),
+      radial-gradient(ellipse at 50% 76%, #5eb0f7 0 33%, transparent 34%),
+      linear-gradient(180deg, #58a9f4 0%, #1b80ec 58%, #1377e5 100%) !important;
+    color: white !important;
+    box-shadow:
+      0 12px 24px rgba(19, 119, 229, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.62) !important;
+  }
+
+  [data-page="profile"] .status-heading {
+    color: #126fca !important;
+  }
+
+  [data-page="profile"] .status-heading svg,
+  [data-page="profile"] .menu-icon,
+  [data-page="profile"] .device-outline-icon,
+  [data-page="profile"] .add-outline-icon,
+  .profile-sheet-icon.blue {
+    color: #126fca !important;
+    background: #eaf4ff !important;
+    border-color: #cfe4fb !important;
+  }
+
+  [data-page="profile"] .guardian-status-card::after {
+    background:
+      radial-gradient(circle at 48% 45%, rgba(27, 128, 236, 0.18), transparent 34%),
+      radial-gradient(ellipse at 54% 62%, rgba(88, 169, 244, 0.12), transparent 66%) !important;
+  }
+
+  [data-page="profile"] .online-pill,
+  .profile-sheet-pill,
+  .profile-sheet-action {
+    color: #126fca !important;
+    background: #eaf4ff !important;
+    border-color: #cfe4fb !important;
+  }
+
+  .profile-sheet-button,
+  .profile-modal-switch.on {
+    background: linear-gradient(180deg, #2389f2 0%, #1377e5 100%) !important;
+  }
+</style>
+<style>
+  /* Final shared top action spec: keep home/profile info + settings icons identical. */
+  [data-page="profile"] .top .icon-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding-block-start: 0 !important;
+  }
+
+  [data-page="profile"] .top .icon-btn {
+    inline-size: 48px !important;
+    block-size: 48px !important;
+    min-inline-size: 48px !important;
+    min-block-size: 48px !important;
+    border-radius: 17px !important;
+    display: grid !important;
+    place-items: center !important;
+    color: #1d2f46 !important;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.94)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.94) !important;
+    box-shadow:
+      0 12px 24px rgba(56, 88, 126, 0.09),
+      inset 0 1px 0 rgba(255, 255, 255, 0.96) !important;
+  }
+
+  [data-page="profile"] .top .icon-btn .icon {
+    inline-size: 21px !important;
+    block-size: 21px !important;
+    stroke: currentColor !important;
+    stroke-width: 2.05 !important;
+    fill: none !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  [data-page="profile"] .top .notify-dot::after {
+    content: "" !important;
+    position: absolute !important;
+    inset-block-start: 8px !important;
+    inset-inline-end: 8px !important;
+    inline-size: 8px !important;
+    block-size: 8px !important;
+    border-radius: 999px !important;
+    background: #ff684f !important;
+    box-shadow: 0 0 0 3px #fff !important;
+  }
+
+  [data-page="profile"] .profile-identity-link {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  [data-page="profile"] .profile-identity-link:active {
+    opacity: 0.82;
+  }
+
+  /* Final profile header repair: standard horizontal iOS identity card. */
+  [data-page="profile"] {
+    gap: 11px !important;
+  }
+
+  .screen:has([data-page="profile"]) {
+    padding-block-start: 6px !important;
+  }
+
+  [data-page="profile"] .top.app-page-head {
+    padding-block: 8px 8px !important;
+  }
+
+  [data-page="profile"] .profile-card {
+    min-block-size: 106px !important;
+    block-size: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 20px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    padding: 16px 18px !important;
+    border-radius: 26px !important;
+  }
+
+  [data-page="profile"] .profile-identity-link {
+    inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    display: grid !important;
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 14px !important;
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  [data-page="profile"] .profile-identity-link > div:last-child {
+    min-inline-size: 0 !important;
+    display: block !important;
+  }
+
+  [data-page="profile"] .profile-avatar {
+    inline-size: 64px !important;
+    block-size: 64px !important;
+    flex: none !important;
+  }
+
+  [data-page="profile"] .profile-avatar svg {
+    inline-size: 36px !important;
+    block-size: 36px !important;
+  }
+
+  [data-page="profile"] .profile-name,
+  [data-page="profile"] .profile-meta {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  [data-page="profile"] .profile-name {
+    font-size: 24px !important;
+    line-height: 1.12 !important;
+    margin: 0 !important;
+  }
+
+  [data-page="profile"] .profile-meta {
+    margin-block-start: 6px !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
+
+  [data-page="profile"] .chevron-icon {
+    justify-self: end !important;
+    align-self: center !important;
+    font-size: 24px !important;
+  }
+
+  [data-page="profile"] .section {
+    margin-block-start: 11px !important;
+  }
+
+  [data-page="profile"] .guardian-status-card {
+    min-block-size: 90px !important;
+    padding: 15px 17px !important;
+  }
+
+  [data-page="profile"] .family-device-card {
+    padding: 7px 14px !important;
+  }
+
+  [data-page="profile"] .profile-device-row {
+    min-block-size: 64px !important;
+    padding-block: 7px !important;
+  }
+
+  .phone[data-notifications-read="true"] .notify-dot::after {
+    opacity: 0 !important;
+    transform: scale(0) !important;
+  }
+
+  .phone[data-notifications-read="true"] [data-page="profile"] .top .notify-dot::after,
+  .phone[data-has-unread-notifications="false"] [data-page="profile"] .top .notify-dot::after {
+    display: none !important;
+    opacity: 0 !important;
+    transform: scale(0) !important;
+  }
+</style>
+<style id="final-main-visual-baseline">
+  .nav {
+    min-block-size: 68px !important;
+    padding: 6px 16px calc(6px + env(safe-area-inset-bottom)) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-block-start: 1px solid rgba(207, 219, 232, 0.72) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 -8px 22px rgba(40, 73, 108, 0.06) !important;
+  }
+
+  .nav-item {
+    flex: 1 1 0 !important;
+    min-block-size: 46px !important;
+    border-radius: 0 !important;
+    gap: 3px !important;
+    color: #8d99a7 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    font-size: 10.5px !important;
+    font-weight: 650 !important;
+  }
+
+  .nav-item .icon {
+    inline-size: 20px !important;
+    block-size: 20px !important;
+    stroke-width: 2 !important;
+  }
+
+  .nav-item.active,
+  [data-page="profile"] .nav-item.active {
+    color: #1377e5 !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .nav-item:active {
+    transform: none !important;
+    background: transparent !important;
+  }
+
+  [data-page="profile"] .top.app-page-head {
+    padding: 14px 2px 12px !important;
+    margin: 0 !important;
+    min-block-size: 72px !important;
+    align-items: center !important;
+  }
+
+  [data-page="profile"] .page-title {
+    font-size: 30px !important;
+    line-height: 1.08 !important;
+    font-weight: 820 !important;
+    letter-spacing: -0.018em !important;
+    margin: 0 !important;
+  }
+
+  [data-page="profile"] .subtle {
+    margin-block-start: 6px !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
+</style>
+<style id="final-notification-dot-state">
+  .notify-dot::after,
+  .app-page-head .notify-dot::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .notify-dot.has-unread::after,
+  .app-page-head .notify-dot.has-unread::after,
+  .phone[data-notifications-read="true"] .notify-dot.has-unread::after,
+  .phone[data-has-unread-notifications="false"] .notify-dot.has-unread::after {
+    display: none !important;
+    opacity: 0 !important;
+    transform: scale(0) !important;
+    content: none !important;
+  }
+
+
+/* Unified top safe area final override for pages with local late styles. */
+:root { --page-safe-top: 28px; }
+.screen { padding-block-start: var(--page-safe-top) !important; }
+.app-page-head,
+[data-page="home"] .top.app-page-head,
+[data-page="profile"] .top.app-page-head {
+  padding-block-start: 0 !important;
+}
+</style>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#eaf4ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="守门监管">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <style id="pwa-shell-overrides">
+    html, body { min-height: 100%; }
+    body {
+      display: block !important;
+      place-items: initial !important;
+      overflow-x: hidden;
+      background: var(--bg, oklch(97% 0.008 245)) !important;
+    }
+    .phone {
+      inline-size: min(430px, 100vw) !important;
+      max-inline-size: 430px !important;
+      min-block-size: 100svh !important;
+      block-size: auto !important;
+      margin-inline: auto !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+    @media (min-width: 431px) {
+      body { background: oklch(96% 0.012 245) !important; }
+      .phone { min-block-size: 100vh !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="我的">
+    <div class="screen">
+      <section class="page" data-page="profile">
+<header class="top app-page-head"><div><h1 class="page-title">我的</h1><p class="subtle">家庭、设备和隐私设置</p></div><div class="icon-actions"><button class="icon-btn notify-dot" aria-label="通知" data-profile-action="notifications"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></button><button class="icon-btn" aria-label="通用设置" data-profile-action="general-settings"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6V20a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1H4a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6V4a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.22.35.42.68.6 1H20a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-.51 1Z"/></svg></button></div></header>
+        <section class="profile-card">
+          <a class="profile-identity-link" href="profile-info.html" aria-label="查看和编辑个人信息">
+          <div class="profile-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 12.8c3.03 0 5.5-2.47 5.5-5.5S15.03 1.8 12 1.8 6.5 4.27 6.5 7.3s2.47 5.5 5.5 5.5Zm0 2.2c-4.12 0-7.55 2.14-8.35 5.04-.18.66.34 1.26 1.02 1.26h14.66c.68 0 1.2-.6 1.02-1.26C19.55 17.14 16.12 15 12 15Z"/></svg>
+          </div>
+          <div>
+            <p class="profile-name">辛斯繁</p>
+            <p class="profile-meta">已绑定 1 个孩子设备 · 2 位家庭成员</p>
+          </div>
+          </a>
+          <span class="chevron-icon">›</span>
+        </section>
+
+        <section class="section">
+          <div class="guardian-status-card" data-profile-action="guardian-status">
+            <div class="status-heading">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4 5.1 5.2v5.55c0 4.5 2.76 7.8 6.9 10.85 4.14-3.05 6.9-6.35 6.9-10.85V5.2L12 2.4Zm3.64 7.2-4.4 4.68-2.42-2.54 1.22-1.16 1.18 1.24 3.18-3.38 1.24 1.16Z"/></svg>
+              <span>守护状态</span>
+            </div>
+            <p>今日规则运行正常，暂无异常使用。</p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title"><h2>家庭设备</h2></div>
+          <div class="family-device-card">
+            <div class="profile-device-row" data-profile-action="device-detail">
+              <div class="device-outline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="2.8" width="10" height="18.4" rx="2.3"/><path d="M10 18.2h4"/></svg></div>
+              <div>
+                <p class="device-title">繁大师的手机</p>
+                <p class="device-sub"><span class="online-dot"></span>在线 · 运行正常</p>
+              </div>
+              <span class="online-pill" data-profile-action="online-toast">在线</span>
+              <span class="row-arrow">›</span>
+            </div>
+            <div class="profile-device-row" data-profile-action="bind-device">
+              <div class="add-outline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+              <div>
+                <p class="device-title">添加孩子设备</p>
+                <p class="device-sub">扫码安装并完成授权</p>
+              </div>
+              <span class="row-arrow">›</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="profile-menu-card">
+            <div class="menu-row featured" data-profile-action="family-members">
+              <span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-8 0"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg></span>
+              <span>家庭成员管理</span><span>›</span>
+            </div>
+            <div class="menu-row" data-profile-action="notification-preferences">
+              <span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span>
+              <span>通知与审批偏好</span><span>›</span>
+            </div>
+            <div class="menu-row" data-profile-action="privacy">
+              <span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"/><path d="M9.5 12.2 11.2 14l3.4-4"/></svg></span>
+              <span>隐私与数据说明</span><span>›</span>
+            </div>
+            <div class="menu-row" data-profile-action="help">
+              <span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 18h.01"/><path d="M9.8 8.7a2.6 2.6 0 1 1 4.5 1.8c-.9.8-2.1 1.4-2.1 3"/><circle cx="12" cy="12" r="9"/></svg></span>
+              <span>帮助与反馈</span><span>›</span>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <nav class="nav" aria-label="底部导航">
+      <a class="nav-item" href="/" data-target="home"><svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg><span>首页</span></a>
+      <a class="nav-item" href="/requests" data-target="approval"><svg class="icon" viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg><span>审批</span></a>
+      <a class="nav-item" href="/rules" data-target="rules"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"/><path d="M9 12h6"/></svg><span>规则</span></a>
+      <a class="nav-item" href="/report" data-target="report"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/></svg><span>报告</span></a>
+      <a class="nav-item active" href="/me" data-target="profile"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>我的</span></a>
+    </nav>
+  </main>
+  <script src="app-interactions.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

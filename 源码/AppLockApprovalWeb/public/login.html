@@ -1,0 +1,815 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>守护时光 - 登录</title>
+  <style>
+    :root {
+      --bg-top: #fbfdff;
+      --bg-bottom: #edf5fd;
+      --fg: #0f1b2d;
+      --muted: #637386;
+      --soft: #8a98aa;
+      --accent: #5f8fcf;
+      --accent-deep: #446fa8;
+      --green: #19a66a;
+      --danger: #d84b4b;
+      --surface: rgba(255, 255, 255, 0.92);
+      --line: rgba(118, 148, 184, 0.16);
+      --shadow: 0 16px 38px rgba(42, 92, 150, 0.12);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% -4%, rgba(182, 218, 252, 0.72), transparent 430px),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+      color: var(--fg);
+      font-family: var(--font);
+    }
+
+    a,
+    button,
+    input {
+      -webkit-tap-highlight-color: transparent;
+      font: inherit;
+    }
+
+    .phone {
+      position: relative;
+      inline-size: min(426px, 100vw);
+      block-size: min(920px, 100vh);
+      overflow: hidden;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 50% 16%, rgba(190, 224, 255, 0.44), transparent 330px),
+        linear-gradient(180deg, #fbfdff 0%, #f5faff 46%, #edf5fd 100%);
+      box-shadow: 0 30px 90px rgba(27, 56, 92, 0.22);
+    }
+
+    .screen {
+      min-block-size: 100%;
+      padding: 14px 24px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-bar {
+      block-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-inline: 4px;
+      font-size: 13px;
+      font-weight: 720;
+      color: #182538;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .signal {
+      inline-size: 16px;
+      block-size: 10px;
+      border: 1.7px solid currentColor;
+      border-block-start: 0;
+      border-inline-start: 0;
+      transform: skewX(-10deg);
+    }
+
+    .battery {
+      position: relative;
+      inline-size: 21px;
+      block-size: 10px;
+      border: 1.6px solid currentColor;
+      border-radius: 3px;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      inset: 2px 6px 2px 2px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      inset-block-start: 2px;
+      inset-inline-end: -4px;
+      inline-size: 2px;
+      block-size: 4px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    .topbar {
+      margin-block-start: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back {
+      inline-size: 42px;
+      block-size: 42px;
+      border: 0;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: #1a2a42;
+      background: rgba(255,255,255,0.68);
+      box-shadow: 0 10px 24px rgba(54, 100, 150, 0.08);
+      text-decoration: none;
+    }
+
+    .back svg {
+      inline-size: 21px;
+      block-size: 21px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: #4c6684;
+      background: rgba(255,255,255,0.55);
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .brand-dot {
+      inline-size: 18px;
+      block-size: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      color: white;
+      background: linear-gradient(145deg, #48a5f6, #0f75e1);
+    }
+
+    .brand-dot svg {
+      inline-size: 12px;
+      block-size: 12px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .headline {
+      margin-block-start: 52px;
+    }
+
+    .headline h1 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 1.08;
+      letter-spacing: -0.026em;
+      font-weight: 840;
+    }
+
+    .headline p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .login-area {
+      margin-block-start: 34px;
+    }
+
+    .input-card {
+      overflow: hidden;
+      border-radius: 28px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.86);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .field-row {
+      min-block-size: 68px;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding-inline: 17px 14px;
+    }
+
+    .field-row + .field-row {
+      border-block-start: 1px solid var(--line);
+    }
+
+    .field-icon {
+      inline-size: 34px;
+      block-size: 34px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      background: rgba(226, 240, 255, 0.88);
+    }
+
+    .field-icon svg {
+      inline-size: 18px;
+      block-size: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    input {
+      min-inline-size: 0;
+      inline-size: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--fg);
+      font-size: 17px;
+      line-height: 1.3;
+      font-weight: 560;
+      caret-color: var(--accent);
+    }
+
+    input::placeholder {
+      color: #a0adbc;
+      font-weight: 500;
+    }
+
+    .form-links {
+      margin-block-start: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      color: #7d8da0;
+      font-size: 13px;
+    }
+
+    .form-links button {
+      border: 0;
+      padding: 0;
+      color: var(--accent-deep);
+      background: transparent;
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    .primary {
+      margin-block-start: 18px;
+      inline-size: 100%;
+      min-block-size: 56px;
+      border: 0;
+      border-radius: 20px;
+      color: white;
+      background: linear-gradient(180deg, #78a6dc, var(--accent-deep));
+      box-shadow: 0 14px 28px rgba(65, 109, 166, 0.18);
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .primary:active {
+      transform: scale(0.986);
+      filter: brightness(0.98);
+    }
+
+    .hint {
+      min-block-size: 18px;
+      margin: 10px 0 0;
+      color: var(--danger);
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(-3px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .hint.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .legal {
+      margin: 4px 0 0;
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .legal button {
+      border: 0;
+      padding: 0;
+      color: #3482de;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .alt {
+      margin-block-start: 36px;
+      text-align: center;
+    }
+
+    .divider {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      color: #96a5b5;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      block-size: 1px;
+      background: rgba(118, 148, 184, 0.18);
+    }
+
+    .wechat {
+      margin: 18px auto 0;
+      inline-size: 58px;
+      block-size: 58px;
+      border: 0;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.34), transparent 27%),
+        linear-gradient(180deg, #39d86f 0%, #15b84e 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
+        0 12px 28px rgba(21, 184, 78, 0.2);
+      cursor: pointer;
+    }
+
+    .wechat svg {
+      inline-size: 32px;
+      block-size: 32px;
+      fill: currentColor;
+      filter: drop-shadow(0 1px 1px rgba(0, 86, 34, 0.18));
+    }
+
+    .register {
+      margin-block-start: auto;
+      padding-block-start: 22px;
+      text-align: center;
+      color: #7d8da0;
+      font-size: 14px;
+    }
+
+    .register button {
+      border: 0;
+      padding: 0;
+      color: var(--accent-deep);
+      background: transparent;
+      font-weight: 780;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: absolute;
+      inset-inline: 20%;
+      inset-block-end: 10.5%;
+      z-index: 10;
+      display: none;
+      padding: 12px 14px;
+      border-radius: 16px;
+      color: white;
+      background: rgba(17, 31, 51, 0.82);
+      box-shadow: 0 14px 34px rgba(20, 36, 58, 0.24);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .toast.show { display: block; }
+
+    .sheet {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      display: none;
+      align-items: flex-end;
+      background: rgba(19, 35, 58, 0.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .sheet.show { display: flex; }
+
+    .sheet-panel {
+      inline-size: 100%;
+      padding: 24px 24px 28px;
+      border-radius: 28px 28px 0 0;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 -18px 46px rgba(35, 63, 100, 0.14);
+    }
+
+    .sheet-panel h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .sheet-panel p {
+      margin: 12px 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .sheet-panel button {
+      inline-size: 100%;
+      min-block-size: 48px;
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(180deg, #78a6dc, #456fa8);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-height: 780px) {
+      .phone { border-radius: 0; }
+      .headline { margin-block-start: 30px; }
+      .login-area { margin-block-start: 24px; }
+      .alt { margin-block-start: 24px; }
+      .field-row { min-block-size: 62px; }
+    }
+  </style>
+  <style>
+    /* Soft-blue theme pass for the login flow. */
+    :root {
+      --accent: #5f8fcf;
+      --accent-deep: #446fa8;
+      --accent-soft: #eef6ff;
+      --green: #55ad7c;
+      --danger: #c76565;
+      --muted: #66778b;
+      --line: rgba(120, 148, 180, 0.13);
+      --shadow: 0 14px 34px rgba(54, 92, 138, 0.11);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 50% -4%, rgba(182, 214, 244, 0.58), transparent 430px),
+        linear-gradient(180deg, #fbfdff, #edf5fc) !important;
+    }
+
+    .phone {
+      background:
+        radial-gradient(circle at 50% 16%, rgba(190, 218, 246, 0.40), transparent 330px),
+        linear-gradient(180deg, #fbfdff 0%, #f6faff 46%, #edf5fc 100%) !important;
+    }
+
+    .brand-dot,
+    .primary,
+    .sheet-panel button {
+      background: linear-gradient(180deg, #78a6dc, #456fa8) !important;
+      box-shadow:
+        0 12px 24px rgba(65, 109, 166, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.34) !important;
+    }
+
+    .field-icon,
+    input {
+      caret-color: var(--accent-deep) !important;
+    }
+
+    .legal button,
+    .register button {
+      color: var(--accent-deep) !important;
+    }
+
+    .wechat {
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255,255,255,0.32), transparent 27%),
+        linear-gradient(180deg, #65c98d 0%, #3ea96f 100%) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.4),
+        0 12px 28px rgba(62, 169, 111, 0.16) !important;
+    }
+  </style>
+<style>
+  /* Login page final reference-blue controls. */
+  :root {
+    --accent: #1b80ec;
+    --accent-deep: #1377e5;
+    --accent-soft: #eaf4ff;
+    --accent-line: #cfe4fb;
+  }
+
+  .primary,
+  .sheet-panel button {
+    background: linear-gradient(180deg, #2389f2 0%, #1377e5 100%) !important;
+    box-shadow:
+      0 14px 28px rgba(19, 119, 229, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.44) !important;
+  }
+
+  .legal button,
+  .register button {
+    color: #126fca !important;
+  }
+
+  .field:focus-within {
+    border-color: #cfe4fb !important;
+    box-shadow: 0 0 0 4px rgba(27, 128, 236, 0.08) !important;
+  }
+
+  /* Final login legal placement: button -> agreement -> forgot password. */
+  .primary + .legal {
+    margin-block-start: 14px !important;
+  }
+
+  .legal {
+    inline-size: 100%;
+    margin-inline: auto !important;
+    color: #98a6b5 !important;
+    font-size: 11.5px !important;
+    line-height: 1.45 !important;
+    text-align: center !important;
+  }
+
+  .hint {
+    min-block-size: 0 !important;
+    block-size: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .hint.show {
+    block-size: auto !important;
+    min-block-size: 18px !important;
+    margin-block-start: 7px !important;
+  }
+
+  .form-links {
+    margin-block-start: 7px !important;
+    justify-content: flex-end !important;
+  }
+
+  .alt {
+    margin-block-start: 27px !important;
+  }
+
+
+    /* Unified top safe area: reserve status-bar space without rendering system icons. */
+    :root {
+      --page-safe-top: 28px;
+    }
+
+    .screen {
+      padding-block-start: var(--page-safe-top) !important;
+    }
+
+    .top,
+    .topbar {
+      margin-block-start: 0 !important;
+    }
+
+    @media (max-height: 760px) {
+      .screen {
+        padding-block-start: var(--page-safe-top) !important;
+      }
+    }
+</style>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#eaf4ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="守门监管">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <style id="pwa-shell-overrides">
+    html, body { min-height: 100%; }
+    body {
+      display: block !important;
+      place-items: initial !important;
+      overflow-x: hidden;
+      background: var(--bg, oklch(97% 0.008 245)) !important;
+    }
+    .phone {
+      inline-size: min(430px, 100vw) !important;
+      max-inline-size: 430px !important;
+      min-block-size: 100svh !important;
+      block-size: auto !important;
+      margin-inline: auto !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+    @media (min-width: 431px) {
+      body { background: oklch(96% 0.012 245) !important; }
+      .phone { min-block-size: 100vh !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="守护时光登录页">
+    <div class="screen">
+      <div class="topbar">
+        <a class="back" href="/welcome" aria-label="返回欢迎页">
+          <svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg>
+        </a>
+        <div class="brand-mini" aria-label="守护时光">
+          <span class="brand-dot" aria-hidden="true">
+            <svg viewBox="0 0 16 16"><path d="M8 2 13 4.2v4.2c0 3.2-2 5.2-5 6.4-3-1.2-5-3.2-5-6.4V4.2L8 2Z"/></svg>
+          </span>
+          守护时光
+        </div>
+      </div>
+
+      <header class="headline">
+        <h1>欢迎回来</h1>
+        <p>登录后继续管理家庭设备</p>
+      </header>
+
+      <section class="login-area" aria-label="手机号密码登录">
+        <form id="loginForm" novalidate>
+          <div class="input-card">
+            <label class="field-row">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M10 18h4"/></svg>
+              </span>
+              <input id="phoneNumber" name="phoneNumber" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="请输入手机号" aria-label="手机号">
+            </label>
+            <label class="field-row">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><path d="M6 11h12v9H6z"/><path d="M12 15v2"/></svg>
+              </span>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="请输入密码" aria-label="密码">
+            </label>
+          </div>
+
+          <button class="primary" type="submit">登录</button>
+          <p class="legal">登录即代表同意
+            <button type="button" data-sheet="用户协议">《用户协议》</button>
+            和
+            <button type="button" data-sheet="隐私政策">《隐私政策》</button>
+          </p>
+          <p class="hint" id="loginHint">请输入手机号和密码</p>
+          <div class="form-links">
+            <button type="button" id="forgotLink">忘记密码</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="alt" aria-label="其他方式登录">
+        <div class="divider">其他方式登录</div>
+        <button class="wechat" type="button" id="wechatBtn" aria-label="微信登录">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M20.8 12.4c-7.3 0-13.2 4.7-13.2 10.6 0 3.3 1.9 6.3 4.9 8.2l-1.2 3.7 4.4-2.2c1.6.5 3.3.8 5.1.8 7.3 0 13.2-4.7 13.2-10.5s-5.9-10.6-13.2-10.6Zm-4.6 8.4a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6Zm9.2 0a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6Z"/>
+            <path d="M40.4 28.2c0-4.9-4.8-8.9-10.7-8.9-.5 0-1.1 0-1.6.1 1.6 1.5 2.6 3.5 2.6 5.8 0 5.4-5.2 9.7-11.8 10.2 1.9 2.2 5.1 3.6 8.6 3.6 1.4 0 2.8-.2 4.1-.7l3.6 1.8-1-3c3.8-1.5 6.2-4.8 6.2-8.9Zm-14.8-.9a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Zm7.4 0a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Z" opacity="0.92"/>
+          </svg>
+        </button>
+      </section>
+
+      <p class="register">还没有账号？
+        <button type="button" id="registerLink">注册家庭账号</button>
+      </p>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="说明">
+      <div class="sheet-panel">
+        <h3 id="sheetTitle">协议说明</h3>
+        <p id="sheetBody">这里用于展示协议摘要。正式版本会接入完整用户协议与隐私政策页面。</p>
+        <button type="button" id="sheetClose">知道了</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const phoneInput = document.getElementById("phoneNumber");
+    const passwordInput = document.getElementById("password");
+    const hint = document.getElementById("loginHint");
+    const toast = document.getElementById("toast");
+    const wechatBtn = document.getElementById("wechatBtn");
+    const registerLink = document.getElementById("registerLink");
+    const forgotLink = document.getElementById("forgotLink");
+    const sheet = document.getElementById("sheet");
+    const sheetTitle = document.getElementById("sheetTitle");
+    const sheetBody = document.getElementById("sheetBody");
+    const sheetClose = document.getElementById("sheetClose");
+    const AUTH_KEY = "parent_logged_in";
+
+    function safeNextPath() {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get("next") || "/";
+      if (!next.startsWith("/") || next.startsWith("//") || next.startsWith("/api/")) return "/";
+      return next;
+    }
+
+    function markLoggedIn() {
+      try {
+        localStorage.setItem(AUTH_KEY, "true");
+      } catch (error) {}
+      document.cookie = AUTH_KEY + "=true; path=/; max-age=2592000";
+    }
+
+    function showHint(message) {
+      hint.textContent = message;
+      hint.classList.add("show");
+      window.clearTimeout(showHint.timer);
+      showHint.timer = window.setTimeout(() => hint.classList.remove("show"), 1800);
+    }
+
+    function showToast(message) {
+      // Keep routine login actions quiet; validation remains inline below the form.
+      return;
+    }
+
+    function openSheet(title, body) {
+      sheetTitle.textContent = title;
+      sheetBody.textContent = body;
+      sheet.classList.add("show");
+    }
+
+    function goHome(delay = 500) {
+      markLoggedIn();
+      window.setTimeout(() => {
+        window.location.href = safeNextPath();
+      }, delay);
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!/^1\d{10}$/.test(phoneInput.value.trim())) {
+        showHint("请输入 11 位手机号");
+        return;
+      }
+      if (!passwordInput.value.trim()) {
+        showHint("请输入密码");
+        return;
+      }
+      goHome();
+    });
+
+    wechatBtn.addEventListener("click", () => {
+      showToast("微信登录授权中");
+      goHome(700);
+    });
+
+    registerLink.addEventListener("click", () => {
+      openSheet("注册家庭账号", "正式版本会进入家庭账号注册流程，注册时可使用手机号验证码完成验证。");
+    });
+
+    forgotLink.addEventListener("click", () => {
+      openSheet("找回密码", "正式版本可通过手机号验证码或账号安全验证重置密码。当前原型先保留入口。");
+    });
+
+    document.querySelectorAll("[data-sheet]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const title = button.dataset.sheet;
+        window.location.href = title === "隐私政策" ? "privacy-policy.html" : "user-agreement.html";
+      });
+    });
+
+    sheetClose.addEventListener("click", () => sheet.classList.remove("show"));
+    sheet.addEventListener("click", (event) => {
+      if (event.target === sheet) sheet.classList.remove("show");
+    });
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "app-lock-approval-web",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply APP_LOCK_DB --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260317.1",
+    "wrangler": "^4.76.0"
+  }
+}

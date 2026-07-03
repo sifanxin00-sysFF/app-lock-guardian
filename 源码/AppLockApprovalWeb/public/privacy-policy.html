@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>隐私政策</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#eaf4ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="守门监管">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    body { margin: 0; min-height: 100svh; background: #f3f8ff; color: #172334; }
+    .phone { max-width: 430px; min-height: 100svh; margin: 0 auto; padding: max(22px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom)); box-sizing: border-box; }
+    .back { border: 0; background: transparent; color: #2379d8; font: inherit; font-weight: 700; padding: 8px 0; }
+    h1 { margin: 18px 0 18px; font-size: 30px; letter-spacing: 0; }
+    .card { background: #fff; border-radius: 24px; padding: 20px; box-shadow: 0 14px 38px rgb(33 79 135 / 10%); }
+    p { margin: 0 0 12px; color: #526173; line-height: 1.7; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <main class="phone">
+    <button class="back" type="button" onclick="history.length > 1 ? history.back() : location.href='/me'">返回</button>
+    <h1>隐私政策</h1>
+    <section class="card">
+      <p>我们只同步守门状态、审批记录、白名单、权限状态和设备在线状态。</p>
+      <p>不会读取聊天内容、照片内容、通讯录正文或短信正文。</p>
+    </section>
+  </main>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("/service-worker.js").catch(() => {}));
+    }
+  </script>
+</body>
+</html>
